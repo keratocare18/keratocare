@@ -1,0 +1,54 @@
+/* App-specific styles - most styling should be in components using design system */
+
+#root {
+  width: 100%;
+  min-height: 100vh;
+}
+
+/* Smooth scroll behavior for all browsers */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Ensure images are responsive */
+img {
+  max-width: 100%;
+  height: auto;
+}
+
+/* Custom scrollbar for webkit browsers */
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: hsl(var(--lightest-gray));
+}
+
+::-webkit-scrollbar-thumb {
+  background: hsl(var(--medical-blue));
+  border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: hsl(var(--medical-blue-dark));
+}
+
+section[id] {
+  scroll-margin-top: 80px; /* Adjust this value based on your header's height */
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
