@@ -1,116 +1,190 @@
-# Kerato Care9
 
-A Vite + React + TypeScript starter app scaffolded with shadcn-ui and Tailwind CSS. This repository contains the Kerato Care9 frontend application. The project includes a basic routing structure, UI primitives, and several useful third-party libraries for building forms, charts, notifications, and animations.
+# 🩺 Kerato Care9
 
-Deployed link
+Kerato Care9 is a **real-world client project** built as a modern frontend web application for an **eye-care–related business**.  
+The goal of the project was to provide a **professional, fast, and accessible website** that presents eye-health and keratoconus-related information in a clean and trustworthy manner.
 
-- Live preview / deployment: https://lovable.dev/projects/f4253598-bcc8-4533-815c-ca88d6aa86ee
+This repository contains the **frontend application**, built using **Vite + React + TypeScript**, with a modern UI stack powered by **Tailwind CSS** and **shadcn-ui**.
 
-Screenshots
+🌐 **Live Website:**  
+https://keratocare9.vercel.app/
 
-Add screenshots of the app here (replace the placeholders with real images):
+---
 
-- Desktop view: ![Desktop screenshot](./screenshots/desktop.png)
-- Mobile view: ![Mobile screenshot](./screenshots/mobile.png)
+## 🧑‍💼 Client Project Context
 
-Project structure (key files)
+This project was developed for a **real-life client** who required:
+- A professional website for their **eye-care business**
+- Clean, medical-grade UI/UX suitable for healthcare audiences
+- Responsive design for mobile and desktop users
+- A scalable frontend architecture for future enhancements
 
-- src/
-  - main.tsx — app entry
-  - App.tsx — router and global providers (React Query, tooltips, toasters)
-  - index.css / App.css — styling and Tailwind setup
-  - pages/ — app pages (Index, Admin, NotFound)
-  - components/ — UI components (shadcn + Radix primitives)
+The repository represents a **production-oriented scaffold** that can be extended with additional features such as dashboards, analytics, and content management.
 
-Technologies
+---
 
-- Vite
-- React 18
-- TypeScript
-- Tailwind CSS
-- shadcn-ui (Radix + Tailwind UI primitives)
-- React Router
-- @tanstack/react-query
-- Sonner and Radix toasts
-- Recharts (charts)
-- react-hook-form + zod (forms & validation)
+## 📸 Screenshots
 
-Features
+_Add real screenshots once available._
 
-(Notes: the codebase is currently a scaffold. The features below reflect the libraries and routes present in the project and the intended functionality to be implemented.)
+- Desktop view:  
+  `./screenshots/desktop.png`
 
-- Routing
-  - / — Public landing page (Index)
-  - /admin — Admin dashboard (Admin)
-  - Catch-all — 404 / NotFound
-- Global state & data fetching
-  - React Query configured for server state caching and fetching
-- Notifications
-  - Toaster and Sonner notifications are set up globally
-- UI primitives
-  - shadcn-ui + Radix primitives for accessible components (tooltips, dialogs, popovers, etc.)
-- Forms & validation
-  - react-hook-form + zod for building forms with schema validation
-- Charts & data visualization
-  - Recharts is included for displaying charts and analytics
-- Date handling
-  - date-fns and react-day-picker for date utilities and pickers
-- Carousel & media
-  - embla-carousel-react for performant carousels
-- OTP input, progress, sliders and other UI widgets
-  - input-otp, Radix components for advanced controls
-- Theme support
-  - next-themes for light/dark theme toggling
+- Mobile view:  
+  `./screenshots/mobile.png`
 
-Getting started (local development)
+---
 
-1. Clone the repo
+## 📂 Project Structure (Key Files)
 
-   git clone https://github.com/pb1803/kerato_care9.git
-   cd kerato_care9
+```
 
-2. Install dependencies
+src/
+├── main.tsx        # Application entry point
+├── App.tsx         # Router & global providers (React Query, toasts, tooltips)
+├── index.css       # Global styles & Tailwind setup
+├── App.css         # App-level styles
+├── pages/          # Application pages
+│   ├── Index.tsx   # Public landing page
+│   ├── Admin.tsx   # Admin dashboard (scaffold)
+│   └── NotFound.tsx
+└── components/     # Reusable UI components (shadcn + Radix)
 
-   npm install
+````
 
-3. Run the dev server
+---
 
-   npm run dev
+## 🛠️ Technologies Used
 
-4. Build for production
+- **Vite**
+- **React 18**
+- **TypeScript**
+- **Tailwind CSS**
+- **shadcn-ui** (Radix + Tailwind UI primitives)
+- **React Router**
+- **@tanstack/react-query**
+- **Sonner & Radix Toasts**
+- **Recharts**
+- **react-hook-form + zod**
+- **date-fns & react-day-picker**
+- **embla-carousel-react**
+- **input-otp**
+- **next-themes** (light/dark mode)
 
-   npm run build
+---
 
-5. Preview the production build locally
+## ✨ Features
 
-   npm run preview
+> ⚠️ Note: The codebase is currently a **scaffolded production-ready frontend**.  
+> The features below reflect the **configured infrastructure and intended functionality**.
 
-Available scripts
+### Routing
+- `/` — Public landing page
+- `/admin` — Admin dashboard (future expansion)
+- Catch-all — 404 / NotFound page
 
-- npm run dev — start Vite dev server
-- npm run build — build production bundle
-- npm run build:dev — build with development mode
-- npm run lint — run ESLint
-- npm run preview — preview production build
+### Global State & Data Fetching
+- React Query configured for server-state management
 
-Notes & next steps
+### Notifications
+- Global toast and Sonner notification system
 
-- The repository currently contains a scaffolded UI and router. Implement page content inside src/pages (Index, Admin, NotFound) and add components under src/components.
-- Add real screenshots to the ./screenshots directory and update the image links above.
-- If you deploy elsewhere (Vercel, Netlify, Fly, etc.), update the "Deployed link" section with the official URL.
+### UI System
+- Accessible UI components using shadcn-ui & Radix
+- Dialogs, tooltips, popovers, sliders, progress bars, etc.
 
-Contributing
+### Forms & Validation
+- `react-hook-form` with `zod` schema validation
 
-Contributions are welcome. Please open issues or pull requests for changes.
+### Charts & Analytics
+- Recharts integrated for dashboards and metrics
 
-License
+### Date & Media Utilities
+- Date pickers and utilities
+- Carousel support for media/content
 
-- Add a LICENSE file to specify the project's license. If none is provided, assume "All rights reserved".
+### Theme Support
+- Light/Dark theme toggling using `next-themes`
 
-Contact
+---
 
-- Repository owner: @pb1803
+## 🚀 Getting Started (Local Development)
 
------
+### 1️⃣ Clone the Repository
+```bash
+git clone https://github.com/pb1803/kerato_care9.git
+cd kerato_care9
+````
 
-Replace the existing README.md entirely with the content above. Commit message: "chore: replace README with project-specific documentation"
+### 2️⃣ Install Dependencies
+
+```bash
+npm install
+```
+
+### 3️⃣ Start Development Server
+
+```bash
+npm run dev
+```
+
+### 4️⃣ Build for Production
+
+```bash
+npm run build
+```
+
+### 5️⃣ Preview Production Build
+
+```bash
+npm run preview
+```
+
+---
+
+## 📜 Available Scripts
+
+* `npm run dev` — Start Vite development server
+* `npm run build` — Create production build
+* `npm run build:dev` — Build in development mode
+* `npm run lint` — Run ESLint
+* `npm run preview` — Preview production build locally
+
+---
+
+## 🔮 Notes & Next Steps
+
+* Implement real content inside `src/pages`
+* Extend `/admin` for dashboards or CMS
+* Add API integration for dynamic data
+* Upload real screenshots to `/screenshots`
+* Add authentication & role-based access
+* Integrate analytics and SEO optimizations
+
+---
+
+## 🤝 Contributing
+
+This repository represents a **client-delivered project**, but improvements and suggestions are welcome.
+
+* Open an issue for bugs or ideas
+* Submit a pull request for enhancements
+
+---
+
+## 📄 License
+
+No license file is currently provided.
+Unless stated otherwise, **all rights are reserved**.
+
+---
+
+## 👤 Contact
+
+* **Repository Owner:** [@pb1803](https://github.com/pb1803)
+
+---
+
+⭐ This project demonstrates **real-client development experience**, modern frontend tooling, and production deployment practices.
+
+```
