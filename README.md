@@ -25,13 +25,12 @@ The repository represents a **production-oriented scaffold** that can be extende
 
 ## 📸 Screenshots
 
-_Add real screenshots once available._
+ Desktop View
+![Desktop Screenshot](./screenshots/desktop.png)
+![Image Comparison](./screenshots/d1.png)
+![Connect Us](./screenshots/d2.png)
 
-- Desktop view:  
-  `./screenshots/desktop.png`
 
-- Mobile view:  
-  `./screenshots/mobile.png`
 
 ---
 
