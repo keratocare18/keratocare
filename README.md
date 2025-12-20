@@ -28,7 +28,7 @@ The repository represents a **production-oriented scaffold** that can be extende
 _Add real screenshots once available._
 
 - Desktop view:  
-  `./screenshots/desktop.png`
+  `./screenshots/Screenshot 2025-12-20 214759.png`
 
 - Mobile view:  
   `./screenshots/mobile.png`
