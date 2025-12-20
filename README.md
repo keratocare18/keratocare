@@ -1,73 +1,116 @@
-# Welcome to your Lovable project
+# Kerato Care9
 
-## Project info
+A Vite + React + TypeScript starter app scaffolded with shadcn-ui and Tailwind CSS. This repository contains the Kerato Care9 frontend application. The project includes a basic routing structure, UI primitives, and several useful third-party libraries for building forms, charts, notifications, and animations.
 
-**URL**: https://lovable.dev/projects/f4253598-bcc8-4533-815c-ca88d6aa86ee
+Deployed link
 
-## How can I edit this code?
+- Live preview / deployment: https://lovable.dev/projects/f4253598-bcc8-4533-815c-ca88d6aa86ee
 
-There are several ways of editing your application.
+Screenshots
 
-**Use Lovable**
+Add screenshots of the app here (replace the placeholders with real images):
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/f4253598-bcc8-4533-815c-ca88d6aa86ee) and start prompting.
+- Desktop view: ![Desktop screenshot](./screenshots/desktop.png)
+- Mobile view: ![Mobile screenshot](./screenshots/mobile.png)
 
-Changes made via Lovable will be committed automatically to this repo.
+Project structure (key files)
 
-**Use your preferred IDE**
+- src/
+  - main.tsx — app entry
+  - App.tsx — router and global providers (React Query, tooltips, toasters)
+  - index.css / App.css — styling and Tailwind setup
+  - pages/ — app pages (Index, Admin, NotFound)
+  - components/ — UI components (shadcn + Radix primitives)
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
-
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
-
-Follow these steps:
-
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
-
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
-
-# Step 3: Install the necessary dependencies.
-npm i
-
-# Step 4: Start the development server with auto-reloading and an instant preview.
-npm run dev
-```
-
-**Edit a file directly in GitHub**
-
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
-
-**Use GitHub Codespaces**
-
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
-
-## What technologies are used for this project?
-
-This project is built with:
+Technologies
 
 - Vite
+- React 18
 - TypeScript
-- React
-- shadcn-ui
 - Tailwind CSS
+- shadcn-ui (Radix + Tailwind UI primitives)
+- React Router
+- @tanstack/react-query
+- Sonner and Radix toasts
+- Recharts (charts)
+- react-hook-form + zod (forms & validation)
 
-## How can I deploy this project?
+Features
 
-Simply open [Lovable](https://lovable.dev/projects/f4253598-bcc8-4533-815c-ca88d6aa86ee) and click on Share -> Publish.
+(Notes: the codebase is currently a scaffold. The features below reflect the libraries and routes present in the project and the intended functionality to be implemented.)
 
-## Can I connect a custom domain to my Lovable project?
+- Routing
+  - / — Public landing page (Index)
+  - /admin — Admin dashboard (Admin)
+  - Catch-all — 404 / NotFound
+- Global state & data fetching
+  - React Query configured for server state caching and fetching
+- Notifications
+  - Toaster and Sonner notifications are set up globally
+- UI primitives
+  - shadcn-ui + Radix primitives for accessible components (tooltips, dialogs, popovers, etc.)
+- Forms & validation
+  - react-hook-form + zod for building forms with schema validation
+- Charts & data visualization
+  - Recharts is included for displaying charts and analytics
+- Date handling
+  - date-fns and react-day-picker for date utilities and pickers
+- Carousel & media
+  - embla-carousel-react for performant carousels
+- OTP input, progress, sliders and other UI widgets
+  - input-otp, Radix components for advanced controls
+- Theme support
+  - next-themes for light/dark theme toggling
 
-Yes, you can!
+Getting started (local development)
 
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
+1. Clone the repo
 
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/features/custom-domain#custom-domain)
+   git clone https://github.com/pb1803/kerato_care9.git
+   cd kerato_care9
+
+2. Install dependencies
+
+   npm install
+
+3. Run the dev server
+
+   npm run dev
+
+4. Build for production
+
+   npm run build
+
+5. Preview the production build locally
+
+   npm run preview
+
+Available scripts
+
+- npm run dev — start Vite dev server
+- npm run build — build production bundle
+- npm run build:dev — build with development mode
+- npm run lint — run ESLint
+- npm run preview — preview production build
+
+Notes & next steps
+
+- The repository currently contains a scaffolded UI and router. Implement page content inside src/pages (Index, Admin, NotFound) and add components under src/components.
+- Add real screenshots to the ./screenshots directory and update the image links above.
+- If you deploy elsewhere (Vercel, Netlify, Fly, etc.), update the "Deployed link" section with the official URL.
+
+Contributing
+
+Contributions are welcome. Please open issues or pull requests for changes.
+
+License
+
+- Add a LICENSE file to specify the project's license. If none is provided, assume "All rights reserved".
+
+Contact
+
+- Repository owner: @pb1803
+
+-----
+
+Replace the existing README.md entirely with the content above. Commit message: "chore: replace README with project-specific documentation"
