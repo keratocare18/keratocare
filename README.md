@@ -27,7 +27,9 @@ The repository represents a **production-oriented scaffold** that can be extende
 
  Desktop View
 ![Desktop Screenshot](./screenshots/desktop.png)
+Image Comparison
 ![Image Comparison](./screenshots/d1.png)
+Connect Us Page
 ![Connect Us](./screenshots/d2.png)
 
 
@@ -74,13 +76,12 @@ src/
 
 ## ✨ Features
 
-> ⚠️ Note: The codebase is currently a **scaffolded production-ready frontend**.  
-> The features below reflect the **configured infrastructure and intended functionality**.
+
 
 ### Routing
 - `/` — Public landing page
 - `/admin` — Admin dashboard (future expansion)
-- Catch-all — 404 / NotFound page
+
 
 ### Global State & Data Fetching
 - React Query configured for server-state management
@@ -183,7 +184,3 @@ Unless stated otherwise, **all rights are reserved**.
 * **Repository Owner:** [@pb1803](https://github.com/pb1803)
 
 ---
-
-⭐ This project demonstrates **real-client development experience**, modern frontend tooling, and production deployment practices.
-
-```
