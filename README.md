@@ -1,7 +1,7 @@
 
-# 🩺 Kerato Care9
+# 🩺 Kerato Care
 
-Kerato Care9 is a **real-world client project** built as a modern frontend web application for an **eye-care–related business**.  
+Kerato Care is a **real-world client project** built as a modern frontend web application for an **eye-care–related business**.  
 The goal of the project was to provide a **professional, fast, and accessible website** that presents eye-health and keratoconus-related information in a clean and trustworthy manner.
 
 This repository contains the **frontend application**, built using **Vite + React + TypeScript**, with a modern UI stack powered by **Tailwind CSS** and **shadcn-ui**.
