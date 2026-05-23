@@ -1,4 +1,17 @@
-// Admin Excel export system - silent background storage
+const ADMIN_MESSAGES_STORAGE_KEY = "keratocare_admin_messages";
+
+const devLog = (...args: unknown[]) => {
+  if (import.meta.env.DEV) {
+    console.log(...args);
+  }
+};
+
+const devError = (...args: unknown[]) => {
+  if (import.meta.env.DEV) {
+    console.error(...args);
+  }
+};
+
 export interface ContactFormData {
   name: string;
   email: string;
@@ -14,162 +27,188 @@ export interface StoredMessage extends ContactFormData {
   userAgent?: string;
 }
 
-// Silent storage function - doesn't notify user
+export interface TopCondition {
+  condition: string;
+  count: number;
+}
+
+export interface AdminStats {
+  total: number;
+  today: number;
+  thisWeek: number;
+  topConditions: TopCondition[];
+  latestMessage: StoredMessage | null;
+}
+
 export function storeMessageSilently(data: ContactFormData): StoredMessage {
   const timestamp = new Date().toISOString();
-  const id = `contact_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
-  
+  const id = `contact_${Date.now()}_${Math.random().toString(36).slice(2, 11)}`;
+
   const storedMessage: StoredMessage = {
     ...data,
     id,
     timestamp,
-    ipAddress: 'Not available', // Would need server-side to get real IP
-    userAgent: navigator.userAgent
+    ipAddress: "Not available",
+    userAgent: navigator.userAgent,
   };
-  
+
   try {
     const existingMessages = getStoredMessages();
     existingMessages.push(storedMessage);
-    localStorage.setItem('keratocare_admin_messages', JSON.stringify(existingMessages));
-    
-    // Also store in a backup location
+
+    localStorage.setItem(
+      ADMIN_MESSAGES_STORAGE_KEY,
+      JSON.stringify(existingMessages),
+    );
     localStorage.setItem(`keratocare_msg_${id}`, JSON.stringify(storedMessage));
-    
-    console.log('📝 Admin: Message stored silently:', id);
+
+    devLog("Admin message stored:", id);
     return storedMessage;
   } catch (error) {
-    console.error('❌ Admin: Failed to store message:', error);
+    devError("Failed to store admin message:", error);
     return storedMessage;
   }
 }
 
-// Get all stored messages (admin only)
 export function getStoredMessages(): StoredMessage[] {
   try {
-    const messages = localStorage.getItem('keratocare_admin_messages');
-    return messages ? JSON.parse(messages) : [];
+    const messages = localStorage.getItem(ADMIN_MESSAGES_STORAGE_KEY);
+    return messages ? (JSON.parse(messages) as StoredMessage[]) : [];
   } catch (error) {
-    console.error('Failed to retrieve stored messages:', error);
+    devError("Failed to retrieve stored messages:", error);
     return [];
   }
 }
 
-// Generate CSV for admin download
 export function generateAdminCSV(): string {
   const messages = getStoredMessages();
-  
+
   const headers = [
-    'ID', 'Timestamp', 'Name', 'Email', 'Phone', 'Condition', 'Message', 'User Agent'
+    "ID",
+    "Timestamp",
+    "Name",
+    "Email",
+    "Phone",
+    "Condition",
+    "Message",
+    "User Agent",
   ];
-  
+
   const escapeCSV = (value: string) => {
-    if (value.includes(',') || value.includes('"') || value.includes('\n')) {
-      return `"${value.replace(/"/g, '""')}"`;
+    if (value.includes(",") || value.includes("\"") || value.includes("\n")) {
+      return `"${value.replace(/"/g, "\"\"")}"`;
     }
-    return value || '';
+    return value || "";
   };
-  
-  const csvRows = messages.map(msg => [
-    msg.id,
-    new Date(msg.timestamp).toLocaleString(),
-    msg.name,
-    msg.email,
-    msg.phone,
-    msg.condition || 'Not specified',
-    msg.message || 'No message',
-    msg.userAgent || 'Unknown'
-  ].map(escapeCSV).join(','));
-  
-  return headers.join(',') + '\n' + csvRows.join('\n');
+
+  const csvRows = messages.map((message) =>
+    [
+      message.id,
+      new Date(message.timestamp).toLocaleString(),
+      message.name,
+      message.email,
+      message.phone,
+      message.condition || "Not specified",
+      message.message || "No message",
+      message.userAgent || "Unknown",
+    ]
+      .map(escapeCSV)
+      .join(","),
+  );
+
+  return `${headers.join(",")}\n${csvRows.join("\n")}`;
 }
 
-// Auto-download Excel for admin (silent)
 export function autoDownloadAdminExcel(): void {
-  const csvContent = generateAdminCSV();
   const messages = getStoredMessages();
-  
-  if (messages.length === 0) return;
-  
-  const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-  const link = document.createElement('a');
-  
-  const timestamp = new Date().toISOString().slice(0, 19).replace(/:/g, '-');
+
+  if (messages.length === 0) {
+    return;
+  }
+
+  const csvContent = generateAdminCSV();
+  const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+  const link = document.createElement("a");
+  const timestamp = new Date().toISOString().slice(0, 19).replace(/:/g, "-");
   const filename = `keratocare-admin-contacts-${timestamp}.csv`;
-  
+
   if (link.download !== undefined) {
     const url = URL.createObjectURL(blob);
-    link.setAttribute('href', url);
-    link.setAttribute('download', filename);
-    link.style.visibility = 'hidden';
+    link.setAttribute("href", url);
+    link.setAttribute("download", filename);
+    link.style.visibility = "hidden";
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
-    
-    console.log(`📊 Admin: Auto-downloaded ${filename} with ${messages.length} messages`);
+    URL.revokeObjectURL(url);
+
+    devLog(`Admin export downloaded: ${filename}`);
   }
 }
 
-// Generate WhatsApp message for user
 export function generateWhatsAppMessage(data: ContactFormData): string {
-  return `Hi KeratoCare! 👋
+  return `Hi KeratoCare!
 
 I'm interested in your services:
 
-👤 Name: ${data.name}
-📧 Email: ${data.email}
-📞 Phone: ${data.phone}
-🏥 Condition: ${data.condition || 'Not specified'}
+Name: ${data.name}
+Email: ${data.email}
+Phone: ${data.phone}
+Condition: ${data.condition || "Not specified"}
 
-${data.message ? `💬 Message: ${data.message}` : ''}
-
-Please contact me for consultation.
+${data.message ? `Message: ${data.message}\n\n` : ""}Please contact me for a consultation.
 
 Thank you!`;
 }
 
-// Clear old messages (admin maintenance)
-export function clearOldMessages(daysOld: number = 30): number {
+export function clearOldMessages(daysOld = 30): number {
   const messages = getStoredMessages();
   const cutoffDate = new Date();
   cutoffDate.setDate(cutoffDate.getDate() - daysOld);
-  
-  const recentMessages = messages.filter(msg => 
-    new Date(msg.timestamp) > cutoffDate
+
+  const recentMessages = messages.filter(
+    (message) => new Date(message.timestamp) > cutoffDate,
   );
-  
   const deletedCount = messages.length - recentMessages.length;
-  
-  localStorage.setItem('keratocare_admin_messages', JSON.stringify(recentMessages));
-  
-  console.log(`🧹 Admin: Cleared ${deletedCount} messages older than ${daysOld} days`);
+
+  localStorage.setItem(
+    ADMIN_MESSAGES_STORAGE_KEY,
+    JSON.stringify(recentMessages),
+  );
+
+  devLog(`Admin cleanup removed ${deletedCount} old messages.`);
   return deletedCount;
 }
 
-// Admin statistics
-export function getAdminStats() {
+export function getAdminStats(): AdminStats {
   const messages = getStoredMessages();
   const today = new Date().toDateString();
   const thisWeek = new Date();
   thisWeek.setDate(thisWeek.getDate() - 7);
-  
+
   return {
     total: messages.length,
-    today: messages.filter(m => new Date(m.timestamp).toDateString() === today).length,
-    thisWeek: messages.filter(m => new Date(m.timestamp) > thisWeek).length,
+    today: messages.filter(
+      (message) => new Date(message.timestamp).toDateString() === today,
+    ).length,
+    thisWeek: messages.filter(
+      (message) => new Date(message.timestamp) > thisWeek,
+    ).length,
     topConditions: getTopConditions(messages),
-    latestMessage: messages[messages.length - 1]
+    latestMessage: messages.at(-1) ?? null,
   };
 }
 
-function getTopConditions(messages: StoredMessage[]) {
-  const conditions: { [key: string]: number } = {};
-  messages.forEach(m => {
-    const condition = m.condition || 'Not specified';
+function getTopConditions(messages: StoredMessage[]): TopCondition[] {
+  const conditions: Record<string, number> = {};
+
+  messages.forEach((message) => {
+    const condition = message.condition || "Not specified";
     conditions[condition] = (conditions[condition] || 0) + 1;
   });
-  
+
   return Object.entries(conditions)
-    .sort(([,a], [,b]) => b - a)
+    .sort(([, countA], [, countB]) => countB - countA)
     .slice(0, 5)
     .map(([condition, count]) => ({ condition, count }));
 }

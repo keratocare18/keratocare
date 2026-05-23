@@ -1,186 +1,84 @@
+# KeratoCare
 
-# 🩺 Kerato Care
+KeratoCare is a Vite + React + TypeScript marketing site for a keratoconus and specialty eye-care clinic. The app is styled with Tailwind CSS and shadcn/ui primitives, and is prepared for static deployment on Vercel.
 
-Kerato Care is a **real-world client project** built as a modern frontend web application for an **eye-care–related business**.  
-The goal of the project was to provide a **professional, fast, and accessible website** that presents eye-health and keratoconus-related information in a clean and trustworthy manner.
+## Tech Stack
 
-This repository contains the **frontend application**, built using **Vite + React + TypeScript**, with a modern UI stack powered by **Tailwind CSS** and **shadcn-ui**.
+- React 18
+- TypeScript
+- Vite
+- Tailwind CSS
+- shadcn/ui
+- React Router
+- TanStack Query
+- Sonner
 
-🌐 **Live Website:**  
-https://keratocare9.vercel.app/
+## Project Structure
 
----
-
-## 🧑‍💼 Client Project Context
-
-This project was developed for a **real-life client** who required:
-- A professional website for their **eye-care business**
-- Clean, medical-grade UI/UX suitable for healthcare audiences
-- Responsive design for mobile and desktop users
-- A scalable frontend architecture for future enhancements
-
-The repository represents a **production-oriented scaffold** that can be extended with additional features such as dashboards, analytics, and content management.
-
----
-
-## 📸 Screenshots
-
- Desktop View
-![Desktop Screenshot](./screenshots/desktop.png)
-Image Comparison
-![Image Comparison](./screenshots/d1.png)
-Connect Us Page
-![Connect Us](./screenshots/d2.png)
-
-
-
----
-
-## 📂 Project Structure (Key Files)
-
+```text
+src/
+  App.tsx
+  main.tsx
+  index.css
+  components/
+  pages/
+  lib/
+  assets/
+public/
+  favicon.svg
+  logo.svg
 ```
 
-src/
-├── main.tsx        # Application entry point
-├── App.tsx         # Router & global providers (React Query, toasts, tooltips)
-├── index.css       # Global styles & Tailwind setup
-├── App.css         # App-level styles
-├── pages/          # Application pages
-│   ├── Index.tsx   # Public landing page
-│   ├── Admin.tsx   # Admin dashboard (scaffold)
-│   └── NotFound.tsx
-└── components/     # Reusable UI components (shadcn + Radix)
-
-````
-
----
-
-## 🛠️ Technologies Used
-
-- **Vite**
-- **React 18**
-- **TypeScript**
-- **Tailwind CSS**
-- **shadcn-ui** (Radix + Tailwind UI primitives)
-- **React Router**
-- **@tanstack/react-query**
-- **Sonner & Radix Toasts**
-- **Recharts**
-- **react-hook-form + zod**
-- **date-fns & react-day-picker**
-- **embla-carousel-react**
-- **input-otp**
-- **next-themes** (light/dark mode)
-
----
-
-## ✨ Features
-
-
-
-### Routing
-- `/` — Public landing page
-- `/admin` — Admin dashboard (future expansion)
-
-
-### Global State & Data Fetching
-- React Query configured for server-state management
-
-### Notifications
-- Global toast and Sonner notification system
-
-### UI System
-- Accessible UI components using shadcn-ui & Radix
-- Dialogs, tooltips, popovers, sliders, progress bars, etc.
-
-### Forms & Validation
-- `react-hook-form` with `zod` schema validation
-
-### Charts & Analytics
-- Recharts integrated for dashboards and metrics
-
-### Date & Media Utilities
-- Date pickers and utilities
-- Carousel support for media/content
-
-### Theme Support
-- Light/Dark theme toggling using `next-themes`
-
----
-
-## 🚀 Getting Started (Local Development)
-
-### 1️⃣ Clone the Repository
-```bash
-git clone https://github.com/pb1803/kerato_care9.git
-cd kerato_care9
-````
-
-### 2️⃣ Install Dependencies
+## Local Development
 
 ```bash
 npm install
-```
-
-### 3️⃣ Start Development Server
-
-```bash
 npm run dev
 ```
 
-### 4️⃣ Build for Production
+## Production Build
 
 ```bash
 npm run build
-```
-
-### 5️⃣ Preview Production Build
-
-```bash
 npm run preview
 ```
 
----
+## Linting
 
-## 📜 Available Scripts
+```bash
+npm run lint
+```
 
-* `npm run dev` — Start Vite development server
-* `npm run build` — Create production build
-* `npm run build:dev` — Build in development mode
-* `npm run lint` — Run ESLint
-* `npm run preview` — Preview production build locally
+## Vercel Deployment
 
----
+This project includes a `vercel.json` rewrite so React Router routes resolve correctly on refresh and direct navigation.
 
-## 🔮 Notes & Next Steps
+### Recommended Environment Variables
 
-* Implement real content inside `src/pages`
-* Extend `/admin` for dashboards or CMS
-* Add API integration for dynamic data
-* Upload real screenshots to `/screenshots`
-* Add authentication & role-based access
-* Integrate analytics and SEO optimizations
+The public site does not require runtime environment variables.
 
----
+Optional internal admin route controls:
 
-## 🤝 Contributing
+```bash
+VITE_ENABLE_ADMIN_PANEL=true
+VITE_ADMIN_PANEL_PASSWORD=your-internal-password
+```
 
-This repository represents a **client-delivered project**, but improvements and suggestions are welcome.
+Notes:
 
-* Open an issue for bugs or ideas
-* Submit a pull request for enhancements
+- Leave `VITE_ENABLE_ADMIN_PANEL` unset in public production deployments unless you intentionally want to expose the internal route.
+- Client-side passwords are not a substitute for server-side authentication. For a real production admin workflow, move admin access behind secure backend auth.
 
----
+## Current Routes
 
-## 📄 License
+- `/` - main landing page
+- `/policies` - legal, privacy, and medical policy page
+- `/admin` - internal local-storage admin tools, disabled by default for public deployments
 
-No license file is currently provided.
-Unless stated otherwise, **all rights are reserved**.
+## Deployment Checklist
 
----
-
-## 👤 Contact
-
-* **Repository Owner:** [@pb1803](https://github.com/pb1803)
-
----
+- Run `npm run lint`
+- Run `npm run build`
+- Confirm all treatment comparison images load correctly
+- Confirm WhatsApp and phone CTA actions behave correctly
+- If deploying with admin enabled, set the required environment variables in Vercel

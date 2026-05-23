@@ -1,18 +1,34 @@
 import { useState } from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Phone, MessageCircle, MapPin, CheckCircle2 } from "lucide-react";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
+  ArrowRight,
+  CheckCircle2,
+  Loader2,
+  MapPin,
+  MessageCircle,
+  Phone,
+} from "lucide-react";
 import { toast } from "sonner";
-import { openWhatsApp } from "@/lib/whatsapp";
-import { 
-  storeMessageSilently,
+import { openWhatsApp, openWhatsAppWithMessage } from "@/lib/whatsapp";
+import {
+  ContactFormData,
   generateWhatsAppMessage,
-  ContactFormData 
+  storeMessageSilently,
 } from "@/lib/admin-storage";
+
+const WhatsAppIcon = ({ className }: { className?: string }) => (
+  <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" className={className}>
+    <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884" />
+  </svg>
+);
 
 const Contact = () => {
   const [formData, setFormData] = useState({
@@ -23,15 +39,28 @@ const Contact = () => {
     message: "",
     agreed: false,
   });
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const resetForm = () => {
+    setFormData({
+      name: "",
+      email: "",
+      phone: "",
+      condition: "",
+      message: "",
+      agreed: false,
+    });
+  };
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!formData.agreed) {
-      toast.error("Please agree to the privacy policy");
+      toast.error("Please agree to the privacy policy.");
       return;
     }
-    
-    // Prepare data for storage
+
+    setIsSubmitting(true);
+
     const contactData: ContactFormData = {
       name: formData.name,
       email: formData.email,
@@ -41,129 +70,121 @@ const Contact = () => {
     };
 
     try {
-      // 🔒 SILENT ADMIN STORAGE (user doesn't see this)
-      const storedMessage = storeMessageSilently(contactData);
-      
-      // 🎯 USER EXPERIENCE: Show success and redirect to WhatsApp
-      toast.success("✅ Message received!", {
+      storeMessageSilently(contactData);
+
+      toast.success("Message received.", {
         description: "Redirecting to WhatsApp for instant support...",
-        duration: 3000
+        duration: 3000,
       });
-      
-      // Clear form
-      setFormData({
-        name: "",
-        email: "",
-        phone: "",
-        condition: "",
-        message: "",
-        agreed: false,
-      });
-      
-      // 💬 Redirect to WhatsApp after 2 seconds
+
+      resetForm();
+
       setTimeout(() => {
-        const whatsappMessage = generateWhatsAppMessage(contactData);
-        const encodedMessage = encodeURIComponent(whatsappMessage);
-        const whatsappUrl = `https://wa.me/917276861131?text=${encodedMessage}`;
-        
-        // Open WhatsApp in new window
-        window.open(whatsappUrl, '_blank');
-        
-        toast.info("💚 WhatsApp opened! Send your message there.", {
-          duration: 5000
+        openWhatsAppWithMessage(generateWhatsAppMessage(contactData));
+
+        toast.info("WhatsApp opened.", {
+          description: "Send your message there to continue the conversation.",
+          duration: 5000,
         });
       }, 2000);
-      
     } catch (error) {
-      console.error("Error handling form submission:", error);
-      
-      // Even if storage fails, still redirect to WhatsApp
-      toast.success("✅ Message received! Redirecting to WhatsApp...");
-      
+      if (import.meta.env.DEV) {
+        console.error("Error handling form submission:", error);
+      }
+
+      toast.success("Message received. Redirecting to WhatsApp...");
+
       setTimeout(() => {
-        const whatsappMessage = generateWhatsAppMessage(contactData);
-        const encodedMessage = encodeURIComponent(whatsappMessage);
-        const whatsappUrl = `https://wa.me/917276861131?text=${encodedMessage}`;
-        window.open(whatsappUrl, '_blank');
+        openWhatsAppWithMessage(generateWhatsAppMessage(contactData));
       }, 1500);
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
-  const handleExportAll = () => {
-    // This function is for admin use only - not accessible to regular users
-    console.log("Admin export function called");
-  };
-
   return (
-    <section id="contact" className="py-20 bg-gradient-subtle">
-      <div className="container mx-auto px-4">
-        <div className="max-w-6xl mx-auto">
-          <h2 className="text-3xl sm:text-4xl font-bold text-center mb-4">Connect For Clarity</h2>
-          <p className="text-center text-muted-foreground mb-12">
-            Multiple ways to reach us - choose what works for you
-          </p>
+    <section id="contact" className="relative overflow-hidden py-20 bg-gradient-subtle">
+      <div className="absolute inset-0 dot-grid opacity-40 pointer-events-none" />
 
-          <div className="grid md:grid-cols-2 gap-8">
-            {/* Contact Methods */}
+      <div className="container relative z-10 mx-auto px-4">
+        <div className="mx-auto max-w-6xl">
+          <div className="mb-12 text-center">
+            <h2 className="text-3xl sm:text-4xl font-bold mb-4">
+              Get in Touch with KeratoCare
+            </h2>
+            <p className="text-muted-foreground">
+              Connect with our eye care specialists for keratoconus treatment
+              and vision consultation.
+            </p>
+          </div>
+
+          <div className="grid gap-8 md:grid-cols-2">
             <div className="space-y-6">
-              <Card className="p-6 card-hover">
-                <div className="flex items-start space-x-4">
-                  <div className="w-12 h-12 rounded-full bg-accent flex items-center justify-center flex-shrink-0">
-                    <Phone className="w-6 h-6 text-primary" />
+              <Card className="group relative glass-card rounded-2xl p-5 cursor-pointer hover:-translate-y-1 transition-all duration-300 hover:shadow-blue-200/60 hover:shadow-xl border-l-4 border-l-blue-400">
+                <a href="tel:+917276861131" className="flex items-start gap-4">
+                  <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-blue-100/60 text-blue-600">
+                    <Phone className="h-6 w-6" />
                   </div>
                   <div className="flex-1">
-                    <h3 className="font-bold text-lg mb-1">Phone - Instant Connect</h3>
-                    <p className="text-2xl font-bold text-primary mb-2">+91 72768 61131</p>
-                    <p className="text-sm text-muted-foreground mb-3">Available 24/7 for consultations</p>
-                    <Button className="w-full bg-primary hover:bg-primary/90" asChild>
-                      <a href="tel:+917276861131">Call Now</a>
-                    </Button>
-                  </div>
-                </div>
-              </Card>
-
-              <Card className="p-6 card-hover">
-                <div className="flex items-start space-x-4">
-                  <div className="w-12 h-12 rounded-full bg-accent flex items-center justify-center flex-shrink-0">
-                    <MessageCircle className="w-6 h-6 text-secondary" />
-                  </div>
-                  <div className="flex-1">
-                    <h3 className="font-bold text-lg mb-1">WhatsApp - Quick Response</h3>
-                    <p className="text-sm text-muted-foreground mb-3">Typically respond in 15 minutes</p>
-                    <Button 
-                      className="w-full bg-secondary hover:bg-secondary/90"
-                      onClick={() => openWhatsApp('generalInquiry')}
-                    >
-                      Open WhatsApp
-                    </Button>
-                  </div>
-                </div>
-              </Card>
-
-              <Card className="p-6">
-                <div className="flex items-start space-x-4">
-                  <div className="w-12 h-12 rounded-full bg-accent flex items-center justify-center flex-shrink-0">
-                    <MapPin className="w-6 h-6 text-primary" />
-                  </div>
-                  <div>
-                    <h3 className="font-bold text-lg mb-1">Location</h3>
-                    <p className="text-foreground mb-1">KeratoCare Consulting</p>
-                    <p className="text-muted-foreground mb-2">Pune, Maharashtra</p>
-                    <p className="text-sm text-muted-foreground">Specialized keratoconus care and consultation</p>
-                    <p className="text-sm font-semibold text-secondary mt-2">
-                      Monday-Sunday, 9 AM - 6 PM
+                    <h3 className="font-bold text-lg mb-1">Phone Consultation</h3>
+                    <p className="mb-2 text-2xl font-bold text-blue-600">+91 72768 61131</p>
+                    <p className="text-sm text-muted-foreground">
+                      Available for keratoconus consultations and eye health inquiries.
                     </p>
                   </div>
-                </div>
+                </a>
               </Card>
 
-              {/* Google Maps */}
-              <Card className="p-6">
-                <h3 className="font-bold text-lg mb-4 flex items-center">
-                  <MapPin className="w-5 h-5 text-primary mr-2" />
-                  Find Us on Map
-                </h3>
-                <div className="relative w-full h-64 rounded-lg overflow-hidden">
+              <Card className="group relative glass-card rounded-2xl p-5 cursor-pointer hover:-translate-y-1 transition-all duration-300 hover:shadow-green-200/60 hover:shadow-xl border-l-4 border-l-green-400">
+                <button
+                  type="button"
+                  onClick={() => openWhatsApp("generalInquiry")}
+                  className="flex w-full items-start gap-4 text-left"
+                >
+                  <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-green-100/70 text-green-600">
+                    <MessageCircle className="h-6 w-6" />
+                  </div>
+                  <div className="flex-1">
+                    <h3 className="font-bold text-lg mb-1">WhatsApp Support</h3>
+                    <p className="mb-2 text-sm font-semibold text-green-700">
+                      Fast responses for assessment and follow-up questions
+                    </p>
+                    <p className="text-sm text-muted-foreground">
+                      Chat directly with our team for quick answers and scheduling help.
+                    </p>
+                  </div>
+                </button>
+              </Card>
+
+              <Card className="group relative glass-card rounded-2xl p-5 cursor-pointer hover:-translate-y-1 transition-all duration-300 hover:shadow-teal-200/60 hover:shadow-xl border-l-4 border-l-teal-400">
+                <a
+                  href="https://maps.google.com/?q=Pune,Maharashtra"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-start gap-4"
+                >
+                  <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-teal-100/70 text-teal-600">
+                    <MapPin className="h-6 w-6" />
+                  </div>
+                  <div className="flex-1">
+                    <h3 className="font-bold text-lg mb-1">Clinic Location</h3>
+                    <p className="text-foreground mb-1">Premium Vision Care Clinic</p>
+                    <p className="text-muted-foreground mb-2">Pune, Maharashtra</p>
+                    <p className="text-sm text-muted-foreground">
+                      Mon-Sat, 10:00 AM - 7:00 PM | Sun: By Appointment
+                    </p>
+                  </div>
+                </a>
+              </Card>
+
+              <Card className="rounded-2xl overflow-hidden shadow-xl ring-1 ring-gray-100 hover:shadow-2xl transition-shadow duration-300">
+                <div className="p-6 pb-4">
+                  <h3 className="font-bold text-lg flex items-center gap-2">
+                    <MapPin className="h-5 w-5 text-primary" />
+                    Find Us on Map
+                  </h3>
+                </div>
+                <div className="h-64 w-full">
                   <iframe
                     src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d242117.78285788757!2d73.72262025!3d18.52460675!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3bc2bf2e67461101%3A0x828d43bf9d9ee343!2sPune%2C%20Maharashtra!5e0!3m2!1sen!2sin!4v1699385760000!5m2!1sen!2sin"
                     width="100%"
@@ -173,81 +194,98 @@ const Contact = () => {
                     loading="lazy"
                     referrerPolicy="no-referrer-when-downgrade"
                     title="KeratoCare Consulting Location - Pune, Maharashtra"
-                    className="rounded-lg"
-                  ></iframe>
-                </div>
-                <div className="mt-3 text-center">
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    asChild
-                    className="text-xs"
-                  >
-                    <a
-                      href="https://maps.google.com/?q=Pune,Maharashtra"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      Open in Google Maps
-                    </a>
-                  </Button>
+                  />
                 </div>
               </Card>
             </div>
 
-            {/* Contact Form */}
-            <Card className="p-8">
-              <div className="flex items-center justify-between mb-6">
-                <h3 className="text-2xl font-bold">Send Us a Message</h3>
-                <div className="flex items-center space-x-2 text-sm">
-                  <MessageCircle className="w-4 h-4 text-green-500" />
-                  <span className="text-green-600 font-medium">WhatsApp Ready</span>
+            <Card className="rounded-3xl border-white/70 p-8 shadow-xl">
+              <div className="mb-6 flex items-center justify-between gap-4">
+                <div>
+                  <h3 className="text-2xl font-bold">Send Us a Message</h3>
+                  <p className="mt-2 text-sm text-muted-foreground">
+                    We will capture your details securely, then move the conversation to WhatsApp.
+                  </p>
+                </div>
+                <div className="hidden items-center gap-2 rounded-full bg-green-50 px-3 py-2 text-sm font-medium text-green-700 sm:flex">
+                  <CheckCircle2 className="h-4 w-4" />
+                  WhatsApp Ready
                 </div>
               </div>
 
               <form onSubmit={handleSubmit} className="space-y-4">
-                <div>
-                  <Label htmlFor="name">Name *</Label>
-                  <Input
+                <div className="relative">
+                  <input
                     id="name"
                     required
                     value={formData.name}
                     onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                    placeholder="Your full name"
+                    className="peer w-full rounded-xl border border-gray-200 bg-white/80 px-4 pt-5 pb-2 backdrop-blur-sm placeholder-transparent transition-all duration-200 focus:outline-none focus:border-blue-400 focus:ring-2 focus:ring-blue-400/20"
+                    placeholder="Full Name"
                   />
+                  <label
+                    htmlFor="name"
+                    className="absolute left-4 top-1 text-xs font-medium text-blue-500 transition-all duration-200 peer-placeholder-shown:top-3.5 peer-placeholder-shown:text-sm peer-placeholder-shown:text-gray-400 peer-focus:top-1 peer-focus:text-xs peer-focus:text-blue-500"
+                  >
+                    Full Name
+                  </label>
                 </div>
 
-                <div>
-                  <Label htmlFor="email">Email *</Label>
-                  <Input
+                <div className="relative">
+                  <input
                     id="email"
                     type="email"
                     required
                     value={formData.email}
                     onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                    placeholder="your@email.com"
+                    className="peer w-full rounded-xl border border-gray-200 bg-white/80 px-4 pt-5 pb-2 backdrop-blur-sm placeholder-transparent transition-all duration-200 focus:outline-none focus:border-blue-400 focus:ring-2 focus:ring-blue-400/20"
+                    placeholder="Email"
                   />
+                  <label
+                    htmlFor="email"
+                    className="absolute left-4 top-1 text-xs font-medium text-blue-500 transition-all duration-200 peer-placeholder-shown:top-3.5 peer-placeholder-shown:text-sm peer-placeholder-shown:text-gray-400 peer-focus:top-1 peer-focus:text-xs peer-focus:text-blue-500"
+                  >
+                    Email
+                  </label>
                 </div>
 
-                <div>
-                  <Label htmlFor="phone">Phone *</Label>
-                  <Input
+                <div className="relative">
+                  <input
                     id="phone"
                     type="tel"
                     required
                     value={formData.phone}
                     onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                    placeholder="+91 XXXXX XXXXX"
+                    className="peer w-full rounded-xl border border-gray-200 bg-white/80 px-4 pt-5 pb-2 backdrop-blur-sm placeholder-transparent transition-all duration-200 focus:outline-none focus:border-blue-400 focus:ring-2 focus:ring-blue-400/20"
+                    placeholder="Phone"
                   />
+                  <label
+                    htmlFor="phone"
+                    className="absolute left-4 top-1 text-xs font-medium text-blue-500 transition-all duration-200 peer-placeholder-shown:top-3.5 peer-placeholder-shown:text-sm peer-placeholder-shown:text-gray-400 peer-focus:top-1 peer-focus:text-xs peer-focus:text-blue-500"
+                  >
+                    Phone
+                  </label>
                 </div>
 
-                <div>
-                  <Label htmlFor="condition">Condition</Label>
-                  <Select value={formData.condition} onValueChange={(value) => setFormData({ ...formData, condition: value })}>
-                    <SelectTrigger>
+                <div className="space-y-2">
+                  <label htmlFor="condition" className="text-sm font-medium text-slate-700">
+                    Condition
+                  </label>
+                  <Select
+                    value={formData.condition}
+                    onValueChange={(value) => setFormData({ ...formData, condition: value })}
+                  >
+                    <SelectTrigger
+                      id="condition"
+                      className="w-full rounded-xl border-gray-200 bg-white/80 backdrop-blur-sm"
+                    >
                       <SelectValue placeholder="Select your condition" />
                     </SelectTrigger>
-                    <SelectContent>
+                    <SelectContent
+                      position="popper"
+                      sideOffset={8}
+                      className="z-[9999] rounded-md border bg-white shadow-lg"
+                    >
                       <SelectItem value="keratoconus">Keratoconus</SelectItem>
                       <SelectItem value="post-surgery">Post-Surgery</SelectItem>
                       <SelectItem value="irregular-cornea">Irregular Cornea</SelectItem>
@@ -256,55 +294,63 @@ const Contact = () => {
                   </Select>
                 </div>
 
-                <div>
-                  <Label htmlFor="message">Message</Label>
-                  <Textarea
+                <div className="relative">
+                  <textarea
                     id="message"
+                    rows={5}
                     value={formData.message}
                     onChange={(e) => setFormData({ ...formData, message: e.target.value })}
-                    placeholder="Tell us about your vision concerns..."
-                    rows={4}
+                    className="peer w-full rounded-xl border border-gray-200 bg-white/80 px-4 pt-6 pb-3 backdrop-blur-sm placeholder-transparent transition-all duration-200 focus:outline-none focus:border-blue-400 focus:ring-2 focus:ring-blue-400/20"
+                    placeholder="Message"
                   />
+                  <label
+                    htmlFor="message"
+                    className="absolute left-4 top-1 text-xs font-medium text-blue-500 transition-all duration-200 peer-placeholder-shown:top-4 peer-placeholder-shown:text-sm peer-placeholder-shown:text-gray-400 peer-focus:top-1 peer-focus:text-xs peer-focus:text-blue-500"
+                  >
+                    Message
+                  </label>
                 </div>
 
-                <div className="flex items-start space-x-2">
+                <div className="flex items-start gap-2">
                   <input
-                    type="checkbox"
                     id="privacy"
+                    type="checkbox"
                     checked={formData.agreed}
                     onChange={(e) => setFormData({ ...formData, agreed: e.target.checked })}
                     className="mt-1"
                   />
-                  <label htmlFor="privacy" className="text-sm text-muted-foreground cursor-pointer">
-                    I agree to the HIPAA privacy policy and consent to being contacted
+                  <label htmlFor="privacy" className="cursor-pointer text-sm text-muted-foreground">
+                    I agree to the privacy policy and consent to being contacted.
                   </label>
                 </div>
 
-                <div className="flex gap-3">
-                  <Button type="submit" className="flex-1 bg-secondary hover:bg-secondary/90">
-                    <CheckCircle2 className="w-4 h-4 mr-2" />
-                    Send via WhatsApp
-                  </Button>
+                <div className="flex flex-col gap-3 sm:flex-row">
                   <Button
-                    type="button"
-                    variant="outline"
-                    onClick={() =>
-                      setFormData({
-                        name: "",
-                        email: "",
-                        phone: "",
-                        condition: "",
-                        message: "",
-                        agreed: false,
-                      })
-                    }
+                    type="submit"
+                    disabled={isSubmitting}
+                    className="btn-shimmer h-auto w-full items-center justify-center gap-3 rounded-xl py-4 font-bold text-white shadow-lg shadow-green-300/30 transition-all duration-200 hover:scale-[1.02] hover:shadow-green-300/50 active:scale-95 disabled:cursor-not-allowed disabled:opacity-70 sm:flex-1 bg-gradient-to-r from-[#25D366] to-[#25B4B3]"
                   >
+                    {isSubmitting ? (
+                      <>
+                        <Loader2 className="w-5 h-5 animate-spin" />
+                        Sending...
+                      </>
+                    ) : (
+                      <>
+                        <WhatsAppIcon className="h-5 w-5" />
+                        Send via WhatsApp
+                        <ArrowRight className="h-5 w-5" />
+                      </>
+                    )}
+                  </Button>
+
+                  <Button type="button" variant="outline" onClick={resetForm} className="w-full sm:w-auto">
                     Clear Form
                   </Button>
                 </div>
 
-                <div className="text-xs text-muted-foreground text-center pt-2">
-                  � You'll be redirected to WhatsApp to complete your message.
+                <div className="pt-2 text-center text-xs text-muted-foreground">
+                  You'll be redirected to WhatsApp to complete your message.
                 </div>
               </form>
             </Card>
