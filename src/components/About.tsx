@@ -5,6 +5,7 @@ import { Award, Heart, Shield, Star, TrendingUp } from "lucide-react";
 import keratoPhoto from "@/assets/kerato.jpg";
 import CountUp from "react-countup";
 import { useInView } from "react-intersection-observer";
+import AssessmentSection from "@/components/AssessmentSection";
 
 const stats = [
   { value: 500, label: "Happy Patients", suffix: "+", decimals: 0, delay: "reveal-delay-1" },
@@ -167,6 +168,10 @@ const About = () => {
                 <div className="absolute inset-0 opacity-0 transition-opacity duration-300 group-hover:opacity-10 bg-gradient-to-r from-primary to-secondary" />
               </Card>
             ))}
+          </div>
+
+          <div className="reveal reveal-delay-1">
+            <AssessmentSection />
           </div>
 
           <div id="testimonials" className="scroll-mt-24 mb-12">
