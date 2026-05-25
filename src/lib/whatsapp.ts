@@ -1,4 +1,4 @@
-export const WHATSAPP_PHONE_NUMBER = "917276861131";
+export const WHATSAPP_PHONE_NUMBER = "918432861131";
 
 const WHATSAPP_WINDOW_FEATURES = "noopener,noreferrer";
 
@@ -64,6 +64,60 @@ Please help me with:
 Looking forward to hearing from you!`,
 } as const;
 
+type AssessmentBookingContext = {
+  recommendation?: string;
+  responses?: string[];
+  riskScorePercent?: number;
+  riskTitle?: string;
+};
+
+export const createAssessmentBookingMessage = ({
+  recommendation,
+  responses = [],
+  riskScorePercent,
+  riskTitle,
+}: AssessmentBookingContext = {}): string => {
+  const summaryLines: string[] = [];
+
+  if (riskTitle) {
+    summaryLines.push(`- Online assessment result: ${riskTitle}`);
+  }
+
+  if (typeof riskScorePercent === "number") {
+    summaryLines.push(`- Risk score shown on the website: ${riskScorePercent}%`);
+  }
+
+  if (responses.length > 0) {
+    summaryLines.push("- My selected responses:");
+    responses.forEach((response, index) => {
+      summaryLines.push(`  ${index + 1}. ${response}`);
+    });
+  }
+
+  if (recommendation) {
+    summaryLines.push(`- Website recommendation: ${recommendation}`);
+  }
+
+  return [
+    "Hello Doctor,",
+    "",
+    "I would like to book a Free Vision Risk Assessment / keratoconus consultation with KeratoCare.",
+    "",
+    summaryLines.length > 0
+      ? "I have already completed the website assessment, and here is my summary:"
+      : "Please help me book the assessment and guide me on the next steps.",
+    ...summaryLines,
+    "",
+    "Please help me with:",
+    "- The earliest available appointment slot",
+    "- Whether I should bring my previous eye reports or prescription",
+    "- Consultation fees and expected duration",
+    "- The recommended next steps after the assessment",
+    "",
+    "Thank you.",
+  ].join("\n");
+};
+
 export const createWhatsAppUrl = (message: string): string => {
   const encodedMessage = encodeURIComponent(message);
   return `https://wa.me/${WHATSAPP_PHONE_NUMBER}?text=${encodedMessage}`;
@@ -77,4 +131,10 @@ export const openWhatsApp = (
   messageType: keyof typeof whatsappMessages,
 ): void => {
   openWhatsAppWithMessage(whatsappMessages[messageType]);
+};
+
+export const openAssessmentBooking = (
+  context: AssessmentBookingContext = {},
+): void => {
+  openWhatsAppWithMessage(createAssessmentBookingMessage(context));
 };

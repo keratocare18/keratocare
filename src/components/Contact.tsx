@@ -17,12 +17,12 @@ import {
   Phone,
 } from "lucide-react";
 import { toast } from "sonner";
-import { openWhatsApp, openWhatsAppWithMessage } from "@/lib/whatsapp";
+import { createWhatsAppUrl, openWhatsApp } from "@/lib/whatsapp";
 import {
   ContactFormData,
-  generateWhatsAppMessage,
   storeMessageSilently,
 } from "@/lib/admin-storage";
+import { submitContactToGoogleSheets } from "@/lib/google-sheets";
 
 const WhatsAppIcon = ({ className }: { className?: string }) => (
   <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" className={className}>
@@ -52,51 +52,96 @@ const Contact = () => {
     });
   };
 
+  const validateForm = (): string | null => {
+    const name = formData.name.trim();
+    const email = formData.email.trim();
+    const phone = formData.phone.trim();
+    const condition = formData.condition.trim();
+    const message = formData.message.trim();
+    const phoneDigits = phone.replace(/\D/g, "");
+
+    if (!name) return "Please enter your full name.";
+    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return "Please enter a valid email address.";
+    if (phoneDigits.length < 10 || phoneDigits.length > 15) return "Please enter a valid phone number.";
+    if (!condition) return "Please select your condition.";
+    if (!message) return "Please add a message.";
+    if (!formData.agreed) return "Please agree to the privacy policy.";
+
+    return null;
+  };
+
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (!formData.agreed) {
-      toast.error("Please agree to the privacy policy.");
+
+    if (isSubmitting) {
+      return;
+    }
+
+    const validationError = validateForm();
+    if (validationError) {
+      toast.error(validationError);
       return;
     }
 
     setIsSubmitting(true);
 
     const contactData: ContactFormData = {
-      name: formData.name,
-      email: formData.email,
-      phone: formData.phone,
-      condition: formData.condition || "Not specified",
-      message: formData.message || "No additional message",
+      name: formData.name.trim(),
+      email: formData.email.trim(),
+      phone: formData.phone.trim(),
+      condition: formData.condition.trim(),
+      message: formData.message.trim(),
     };
+
+    const whatsappMessage = `Hello KeratoCare,
+I would like to book a consultation.
+
+Name: ${contactData.name}
+Phone: ${contactData.phone}
+Condition: ${contactData.condition}
+
+Message:
+${contactData.message}`;
+
+    const whatsappWindow = window.open("about:blank", "_blank");
 
     try {
       storeMessageSilently(contactData);
 
+      const savedToSheets = await submitContactToGoogleSheets(contactData);
+
+      if (!savedToSheets) {
+        throw new Error("Unable to save the contact form to Google Sheets.");
+      }
+
       toast.success("Message received.", {
-        description: "Redirecting to WhatsApp for instant support...",
-        duration: 3000,
+        description: "Opening WhatsApp with your consultation message...",
+        duration: 2500,
       });
 
       resetForm();
 
-      setTimeout(() => {
-        openWhatsAppWithMessage(generateWhatsAppMessage(contactData));
+      const whatsappUrl = createWhatsAppUrl(whatsappMessage);
+      if (whatsappWindow) {
+        whatsappWindow.location.href = whatsappUrl;
+      } else {
+        window.open(whatsappUrl, "_blank");
+      }
 
-        toast.info("WhatsApp opened.", {
-          description: "Send your message there to continue the conversation.",
-          duration: 5000,
-        });
-      }, 2000);
+      toast.info("WhatsApp opened.", {
+        description: "Send the message there to continue the conversation.",
+        duration: 4000,
+      });
     } catch (error) {
       if (import.meta.env.DEV) {
         console.error("Error handling form submission:", error);
       }
 
-      toast.success("Message received. Redirecting to WhatsApp...");
+      whatsappWindow?.close();
 
-      setTimeout(() => {
-        openWhatsAppWithMessage(generateWhatsAppMessage(contactData));
-      }, 1500);
+      toast.error("We couldn't save your message right now.", {
+        description: "Please try again in a moment.",
+      });
     } finally {
       setIsSubmitting(false);
     }
@@ -121,13 +166,13 @@ const Contact = () => {
           <div className="grid gap-8 md:grid-cols-2">
             <div className="space-y-6">
               <Card className="group relative glass-card rounded-2xl p-5 cursor-pointer hover:-translate-y-1 transition-all duration-300 hover:shadow-blue-200/60 hover:shadow-xl border-l-4 border-l-blue-400">
-                <a href="tel:+917276861131" className="flex items-start gap-4">
+                <a href="tel:+918432861131" className="flex items-start gap-4">
                   <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-blue-100/60 text-blue-600">
                     <Phone className="h-6 w-6" />
                   </div>
                   <div className="flex-1">
                     <h3 className="font-bold text-lg mb-1">Phone Consultation</h3>
-                    <p className="mb-2 text-2xl font-bold text-blue-600">+91 72768 61131</p>
+                    <p className="mb-2 text-2xl font-bold text-blue-600">+91 84328 61131</p>
                     <p className="text-sm text-muted-foreground">
                       Available for keratoconus consultations and eye health inquiries.
                     </p>
@@ -218,6 +263,7 @@ const Contact = () => {
                   <input
                     id="name"
                     required
+                    autoComplete="name"
                     value={formData.name}
                     onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                     className="peer w-full rounded-xl border border-gray-200 bg-white/80 px-4 pt-5 pb-2 backdrop-blur-sm placeholder-transparent transition-all duration-200 focus:outline-none focus:border-blue-400 focus:ring-2 focus:ring-blue-400/20"
@@ -236,6 +282,7 @@ const Contact = () => {
                     id="email"
                     type="email"
                     required
+                    autoComplete="email"
                     value={formData.email}
                     onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                     className="peer w-full rounded-xl border border-gray-200 bg-white/80 px-4 pt-5 pb-2 backdrop-blur-sm placeholder-transparent transition-all duration-200 focus:outline-none focus:border-blue-400 focus:ring-2 focus:ring-blue-400/20"
@@ -254,6 +301,8 @@ const Contact = () => {
                     id="phone"
                     type="tel"
                     required
+                    inputMode="tel"
+                    autoComplete="tel"
                     value={formData.phone}
                     onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
                     className="peer w-full rounded-xl border border-gray-200 bg-white/80 px-4 pt-5 pb-2 backdrop-blur-sm placeholder-transparent transition-all duration-200 focus:outline-none focus:border-blue-400 focus:ring-2 focus:ring-blue-400/20"
@@ -298,6 +347,7 @@ const Contact = () => {
                   <textarea
                     id="message"
                     rows={5}
+                    required
                     value={formData.message}
                     onChange={(e) => setFormData({ ...formData, message: e.target.value })}
                     className="peer w-full rounded-xl border border-gray-200 bg-white/80 px-4 pt-6 pb-3 backdrop-blur-sm placeholder-transparent transition-all duration-200 focus:outline-none focus:border-blue-400 focus:ring-2 focus:ring-blue-400/20"

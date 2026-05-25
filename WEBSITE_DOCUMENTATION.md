@@ -129,7 +129,7 @@ No text heading; branding is handled by a logo image block.
 
 - logo scrolls to `#hero`
 - nav items smooth-scroll to matching section IDs
-- phone button uses `tel:+917276861131`
+- phone button uses `tel:+918432861131`
 - main CTA scrolls to `#assessment`
 
 **Animations / interactions**
@@ -528,7 +528,7 @@ The copy positions KeratoCare as a premium eye-care clinic specializing in kerat
 ### CTA buttons
 
 - `Book Free Assessment`: scrolls to `#assessment`
-- `Call Now`: `tel:+917276861131`
+- `Call Now`: `tel:+918432861131`
 
 ### Background / gradient
 

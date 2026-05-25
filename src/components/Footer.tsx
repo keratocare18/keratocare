@@ -7,6 +7,7 @@ import {
   MapPin,
   Phone,
 } from "lucide-react";
+import { openAssessmentBooking } from "@/lib/whatsapp";
 
 const serviceLinks = [
   {
@@ -25,9 +26,9 @@ const serviceLinks = [
     title: "See glare reduction eye care solutions",
   },
   {
-    href: "#vision-assessment",
+    href: "#assessment",
     label: "Vision Assessment",
-    title: "View KeratoCare vision assessment details",
+    title: "View the KeratoCare free vision risk assessment",
   },
   {
     href: "#scleral-lenses",
@@ -140,12 +141,18 @@ const FooterNavLink = ({ href, label, title }: FooterLinkProps) => (
 );
 
 const FooterBrandLogo = () => (
-  <div className="relative h-9 w-[150px] overflow-hidden sm:h-10 sm:w-[168px]">
+  <div className="relative flex min-h-[72px] w-[280px] flex-col items-start justify-start overflow-visible pt-1 pb-1 sm:min-h-[80px] sm:w-[310px]">
     <img
-      src="/logo.svg"
+      src="/logo.png"
       alt="KeratoCare Advanced Contact Lens Care and Support"
-      className="absolute left-1/2 top-1/2 h-full w-full -translate-x-1/2 -translate-y-[46%] scale-[3.2] object-contain object-center drop-shadow-[0_10px_22px_rgba(37,180,179,0.10)]"
+      className="block h-auto w-full object-contain object-left drop-shadow-[0_10px_22px_rgba(37,180,179,0.10)]"
     />
+    <span
+      aria-hidden="true"
+      className="absolute right-0 top-1 text-[11px] font-semibold leading-none text-slate-700/75 sm:text-xs"
+    >
+      ®
+    </span>
   </div>
 );
 
@@ -187,7 +194,7 @@ const Footer = () => {
       />
 
       <address className="sr-only not-italic">
-        KeratoCare, Pune, Maharashtra, India. Phone: +91 72768 61131.
+        KeratoCare, Pune, Maharashtra, India. Phone: +91 84328 61131.
       </address>
 
       <div className="container relative z-10 mx-auto px-4">
@@ -204,38 +211,40 @@ const Footer = () => {
             </p>
           </div>
 
-          <a
-            href="#assessment"
-            title="Book your free eye assessment with KeratoCare"
+          <button
+            type="button"
+            onClick={() => openAssessmentBooking()}
+            title="Book your free eye assessment with KeratoCare on WhatsApp"
             className="mt-6 inline-flex h-12 items-center justify-center gap-2 rounded-full border border-white/65 bg-white px-6 text-sm font-semibold text-[#173B8D] shadow-lg shadow-cyan-900/10 transition-all duration-300 hover:-translate-y-0.5 hover:bg-sky-50 hover:shadow-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/55 focus-visible:ring-offset-0 lg:mt-0"
           >
             Book Free Assessment
             <ArrowUpRight className="h-4 w-4" />
-          </a>
+          </button>
         </div>
 
         <div className="mt-12 rounded-[32px] border border-white/70 bg-white/66 p-6 shadow-[0_24px_60px_-30px_rgba(79,172,254,0.35)] backdrop-blur-xl sm:p-8">
-          <div className="flex flex-col gap-8 border-b border-sky-100/90 pb-8 lg:flex-row lg:items-end lg:justify-between">
-            <div className="max-w-2xl">
+          <div className="flex flex-col gap-10 border-b border-sky-100/90 pb-10 lg:flex-row lg:items-start lg:justify-between lg:gap-12">
+            <div className="max-w-2xl pt-1 lg:pt-2">
               <FooterBrandLogo />
 
-              <p className="mt-5 max-w-2xl text-sm leading-7 text-slate-600 sm:text-base">
-                KeratoCare specializes in keratoconus treatment, specialty
-                contact lenses, corneal mapping, and advanced vision correction
-                with a patient-first approach for clearer, more confident sight.
+              <p className="mt-6 max-w-2xl text-sm leading-7 text-slate-600 sm:mt-7 sm:text-base">
+                KeratoCare focuses on keratoconus treatment, scleral and RGP
+                lenses, irregular cornea cases and detailed corneal mapping —
+                with a calm, patient-first approach to clearer, more
+                comfortable vision.
               </p>
             </div>
 
-            <div className="grid gap-3 sm:grid-cols-2">
+            <div className="grid gap-3 sm:grid-cols-2 lg:pt-2">
               <a
-                href="tel:+917276861131"
-                title="Call KeratoCare at +91 72768 61131"
+                href="tel:+918432861131"
+                title="Call KeratoCare at +91 84328 61131"
                 className="inline-flex items-center gap-3 rounded-2xl border border-white/80 bg-white/82 px-4 py-3 text-sm text-slate-700 shadow-[0_16px_38px_-24px_rgba(79,172,254,0.45)] transition-all duration-300 hover:-translate-y-0.5 hover:border-sky-200 hover:bg-white hover:text-[#173B8D] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-200/90 focus-visible:ring-offset-0"
               >
                 <span className="inline-flex h-9 w-9 items-center justify-center rounded-full bg-sky-100 text-[#173B8D]">
                   <Phone className="h-4 w-4" />
                 </span>
-                <span>+91 72768 61131</span>
+                <span>+91 84328 61131</span>
               </a>
 
               <a

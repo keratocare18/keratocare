@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Menu, Phone, X } from "lucide-react";
+import { openWhatsAppWithMessage } from "@/lib/whatsapp";
 
 const navItems = [
   { id: "hero", label: "Home" },
@@ -11,14 +12,20 @@ const navItems = [
 ];
 
 const BrandLogo = () => (
-  <div className="relative h-10 w-[148px] overflow-hidden sm:h-12 sm:w-[178px] lg:h-14 lg:w-[222px]">
-    <img
-      src="/logo.svg"
-      alt="KeratoCare"
-      className="absolute left-1/2 top-1/2 h-full w-full -translate-x-1/2 -translate-y-[46%] scale-[4.2] object-contain object-center drop-shadow-[0_1px_2px_rgba(0,0,0,0.10)]"
-    />
+  <div className="flex items-center">
+    <div className="flex items-center justify-start w-[156px] sm:w-[210px] lg:w-[270px]">
+      <img
+        src="/logo.png"
+        alt="KeratoCare"
+        className="block w-full max-h-[48px] object-contain object-left sm:max-h-[54px]"
+        draggable={false}
+      />
+    </div>
   </div>
 );
+
+const consultationMessage =
+  "Hello KeratoCare, I would like to book a consultation regarding keratoconus treatment.";
 
 const Header = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -76,21 +83,19 @@ const Header = () => {
   return (
     <header
       className={`fixed top-0 w-full z-50 transition-all duration-500 ${
-        scrolled ? "scrolled glass-card py-2 shadow-lg shadow-blue-900/5" : "bg-transparent py-4"
+        scrolled ? "scrolled glass-card py-3 shadow-lg shadow-blue-900/5" : "bg-transparent py-4"
       }`}
     >
       <div className="container mx-auto px-4">
-        <div className="rounded-[28px] border border-white/50 bg-white/75 px-4 py-2 shadow-[0_16px_36px_-24px_rgba(15,23,42,0.35)] backdrop-blur-xl sm:px-5 lg:rounded-full lg:px-6">
-          <div className="flex min-h-[64px] items-center justify-between gap-3 sm:min-h-[68px] lg:min-h-[74px] lg:gap-5">
+        <div className="rounded-[28px] border border-white/50 bg-white/75 px-4 py-3 shadow-[0_16px_36px_-24px_rgba(15,23,42,0.35)] backdrop-blur-xl sm:px-5 lg:rounded-full lg:px-6 lg:py-3.5">
+          <div className="flex min-h-[74px] items-center justify-between gap-3 lg:min-h-[84px] lg:gap-5">
             <button
               type="button"
               onClick={() => scrollToSection("hero")}
-              className="group flex shrink-0 items-center self-stretch rounded-2xl transition-transform duration-300 hover:scale-[1.01] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-200/90 focus-visible:ring-offset-0"
+              className="flex shrink-0 items-center self-center rounded-2xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-200/90 focus-visible:ring-offset-0"
               aria-label="Go to KeratoCare homepage section"
             >
-              <div className="flex items-center transition-transform duration-300 group-hover:-translate-y-0.5">
-                <BrandLogo />
-              </div>
+              <BrandLogo />
             </button>
 
             <div className="hidden min-w-0 flex-1 items-center justify-end gap-5 md:flex lg:gap-7">
@@ -124,10 +129,10 @@ const Header = () => {
 
               <Button
                 type="button"
-                onClick={() => scrollToSection("assessment")}
+                onClick={() => openWhatsAppWithMessage(consultationMessage)}
                 className="btn-shimmer btn-medical-primary h-auto shrink-0 rounded-full px-5 py-3 text-sm font-semibold text-white"
               >
-                Free Vision Assessment
+                Book Your Consultation
               </Button>
             </div>
 
@@ -170,7 +175,7 @@ const Header = () => {
 
                 <div className="mt-3 grid gap-3 sm:grid-cols-2">
                   <a
-                    href="tel:+917276861131"
+                    href="tel:+918432861131"
                     className="inline-flex items-center justify-center gap-2 rounded-2xl border border-sky-100 bg-white px-4 py-3 text-sm font-semibold text-[#173B8D] shadow-sm transition-all duration-200 hover:bg-sky-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-200/90 focus-visible:ring-offset-0"
                   >
                     <Phone className="h-4 w-4 text-[#25B4B3]" />
@@ -179,10 +184,10 @@ const Header = () => {
 
                   <Button
                     type="button"
-                    onClick={() => scrollToSection("assessment")}
+                    onClick={() => openWhatsAppWithMessage(consultationMessage)}
                     className="btn-shimmer btn-medical-primary h-auto rounded-full px-5 py-3 text-sm font-semibold text-white"
                   >
-                    Free Vision Assessment
+                    Book Your Consultation
                   </Button>
                 </div>
               </nav>

@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, type TransitionEvent } from "react";
 import { AlertCircle, Eye, Lightbulb, type LucideIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
 import glareReductionAfter from "@/assets/treatments/glare-reduction-after.jpg";
@@ -23,6 +23,8 @@ type TreatmentImage = {
   alt: string;
   label: string;
   summary: string;
+  width: number;
+  height: number;
   imageClassName?: string;
 };
 
@@ -36,52 +38,62 @@ type TreatmentOption = {
 const treatmentData = {
   visionClarity: {
     icon: Eye,
-    title: "Vision Clarity",
-    description: "See how specialty lenses shift sight from blurred and distorted to sharper, more confident daily vision.",
+    title: "Blurry Vision",
+    description: "Keratoconus blurs and distorts everything. After treatment, patients describe it like someone cleaned the lens of life",
     images: {
       before: {
         src: visionClarityBefore,
         alt: "Blurred eye chart simulating vision clarity before keratoconus treatment",
         label: "Before Treatment - Blurred Vision",
-        summary: "Before treatment: letters can appear soft, doubled, and difficult to separate.",
+        summary: "This is how a keratoconus patient reads an eye chart. Familiar?",
+        width: 1056,
+        height: 1489,
       },
       after: {
         src: visionClarityAfter,
         alt: "Clear eye chart showing improved vision clarity after keratoconus treatment",
         label: "After Treatment - Improved Clarity",
         summary: "After treatment: sharper focus supports more confident reading and daily sight.",
+        width: 736,
+        height: 1039,
       },
     },
   },
   glareReduction: {
     icon: AlertCircle,
-    title: "Glare Reduction",
-    description: "Switch views to demonstrate how treatment can calm harsh reflections and reduce visual discomfort in bright environments.",
+    title: "Night Glare & Halos",
+    description: "Night driving becomes a nightmare with keratoconus — every light explodes into a starburst. After treatment, patients can drive confidently again.",
     images: {
       before: {
         src: glareReductionBefore,
         alt: "Night street scene with excessive glare before treatment",
         label: "Before Treatment - Excessive Glare",
-        summary: "Before treatment: bright light sources can bloom heavily and wash out surrounding detail.",
+        summary: "Night driving with keratoconus. Our patients call this their biggest fear.",
+        width: 1600,
+        height: 1200,
       },
       after: {
         src: glareReductionAfter,
         alt: "Night street scene with reduced glare after treatment",
         label: "After Treatment - Reduced Glare",
         summary: "After treatment: light flare is calmer, making edges and contrast easier to read.",
+        width: 1600,
+        height: 1200,
       },
     },
   },
   lightSensitivity: {
     icon: Lightbulb,
-    title: "Light Sensitivity",
-    description: "Show the difference between overwhelming brightness and a more relaxed, manageable view after treatment support.",
+    title: "Light Sensitivity / Photophobia",
+    description: "Bright rooms, screens, sunlight - all painful before treatment. Patients tell us: 'I stopped going out.' After treatment, that changes.",
     images: {
       before: {
         src: lightSensitivityBefore,
         alt: "Over-bright city scene simulating strong light sensitivity before treatment",
         label: "Before Treatment - Severe Sensitivity",
-        summary: "Before treatment: overall brightness can feel harsh and visually overwhelming.",
+        summary: "Even indoor light felt unbearable. Sound familiar? You're not alone.",
+        width: 1254,
+        height: 1254,
         imageClassName: "object-cover scale-[1.12] sm:scale-[1.16]",
       },
       after: {
@@ -89,6 +101,8 @@ const treatmentData = {
         alt: "Balanced city scene showing improved light comfort after treatment",
         label: "After Treatment - Improved Comfort",
         summary: "After treatment: brightness feels more controlled, with better comfort in daily environments.",
+        width: 736,
+        height: 736,
         imageClassName: "object-cover scale-[1.12] sm:scale-[1.16]",
       },
     },
@@ -98,23 +112,14 @@ const treatmentData = {
 const comparisonStateMeta: Record<
   ComparisonState,
   {
-    badge: string;
-    badgeClassName: string;
     chipClassName: string;
-    viewLabel: string;
   }
 > = {
   before: {
-    badge: "Before",
-    badgeClassName: "bg-red-500 text-white",
     chipClassName: "bg-red-100 text-red-700 shadow-sm",
-    viewLabel: "Before View",
   },
   after: {
-    badge: "After",
-    badgeClassName: "bg-green-500 text-white",
     chipClassName: "bg-green-100 text-green-700 shadow-sm",
-    viewLabel: "After View",
   },
 };
 
@@ -150,9 +155,10 @@ const VisionSlider = () => {
 
     let cancelled = false;
     let frameId = 0;
-    let settleTimer = 0;
     const preloadedImage = new window.Image();
 
+    // PERF: Preloading the next slide before swapping avoids decode jank when
+    // users switch images, and rAF starts the transition on a paint boundary.
     const beginTransition = () => {
       if (cancelled) {
         return;
@@ -164,16 +170,6 @@ const VisionSlider = () => {
       frameId = window.requestAnimationFrame(() => {
         setIsIncomingVisible(true);
       });
-
-      settleTimer = window.setTimeout(() => {
-        if (cancelled) {
-          return;
-        }
-
-        setDisplayedImage(targetImage);
-        setIncomingImage(null);
-        setIsIncomingVisible(false);
-      }, 360);
     };
 
     preloadedImage.onload = beginTransition;
@@ -193,20 +189,29 @@ const VisionSlider = () => {
       if (frameId) {
         window.cancelAnimationFrame(frameId);
       }
-      if (settleTimer) {
-        window.clearTimeout(settleTimer);
-      }
     };
   }, [displayedImage.src, targetImage]);
+
+  const handleIncomingTransitionEnd = (event: TransitionEvent<HTMLImageElement>) => {
+    if (event.propertyName !== "opacity" || !incomingImage || !isIncomingVisible) {
+      return;
+    }
+
+    // PERF: Transitionend removes the fixed settle timeout so image swaps stay
+    // synchronized with the compositor instead of assuming a timer duration.
+    setDisplayedImage(incomingImage);
+    setIncomingImage(null);
+    setIsIncomingVisible(false);
+  };
 
   return (
     <section className="reveal py-20 bg-background">
       <div className="container mx-auto px-4">
         <div className="max-w-5xl mx-auto">
           <div className="text-center mb-10">
-            <h2 className="text-3xl sm:text-4xl font-bold mb-4">Vision Transformation with Keratoconus Treatment</h2>
+            <h2 className="text-3xl sm:text-4xl font-bold mb-4">See What Changes After Treatment — Through a Patient's Eyes</h2>
             <p className="text-center text-muted-foreground max-w-3xl mx-auto">
-              Explore three treatment outcomes in one section. Choose a concern first, then switch between the before and after views to see how the image changes.
+              Our patients describe 3 things that bothered them most — blurry vision, glare at night, and sensitivity to light. See the difference treatment made.
             </p>
           </div>
 
@@ -280,21 +285,26 @@ const VisionSlider = () => {
                   <img
                     src={displayedImage.src}
                     alt={displayedImage.alt}
+                    width={displayedImage.width}
+                    height={displayedImage.height}
                     className={cn(
-                      "h-full w-full transition-transform duration-500 ease-out",
+                      "h-full w-full transform-gpu transition-transform duration-500 ease-out will-change-transform",
                       displayedImage.imageClassName ?? "object-contain",
                       incomingImage ? "scale-[1.01]" : "scale-100",
                     )}
                     draggable={false}
                     decoding="async"
+                    loading="lazy"
                   />
                   {incomingImage ? (
                     <img
                       src={incomingImage.src}
                       alt=""
                       aria-hidden="true"
+                      width={incomingImage.width}
+                      height={incomingImage.height}
                       className={cn(
-                        "absolute inset-0 h-full w-full transition-all duration-500 ease-out",
+                        "absolute inset-0 h-full w-full transform-gpu transition-[transform,opacity] duration-500 ease-out will-change-[transform,opacity]",
                         incomingImage.imageClassName ?? "object-contain",
                         isIncomingVisible
                           ? "scale-100 opacity-100"
@@ -302,32 +312,12 @@ const VisionSlider = () => {
                       )}
                       draggable={false}
                       decoding="async"
+                      loading="lazy"
+                      onTransitionEnd={handleIncomingTransitionEnd}
                     />
                   ) : null}
                 </div>
 
-                <div
-                  className={cn(
-                    "absolute top-3 left-3 px-3 py-1 rounded-full text-xs font-bold",
-                    comparisonStateMeta[selectedState].badgeClassName,
-                  )}
-                >
-                  {comparisonStateMeta[selectedState].badge}
-                </div>
-
-                <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-slate-950/80 via-slate-950/30 to-transparent p-4 sm:p-5">
-                  <div className="flex items-end justify-between gap-3">
-                    <div>
-                      <p className="text-[11px] sm:text-xs font-semibold uppercase tracking-[0.22em] text-white/70 mb-1">
-                        {comparisonStateMeta[selectedState].viewLabel}
-                      </p>
-                      <p className="text-sm sm:text-base font-semibold text-white">{targetImage.label}</p>
-                    </div>
-                    <span className="rounded-full bg-white/15 px-3 py-1 text-[11px] sm:text-xs font-semibold uppercase tracking-[0.2em] text-white backdrop-blur-sm">
-                      {activeTreatment.title}
-                    </span>
-                  </div>
-                </div>
               </div>
 
               <p className="text-sm text-center text-slate-600 italic">

@@ -1,7 +1,6 @@
 import type { SVGProps } from "react";
 import { Card } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Activity, ArrowRight, CheckCircle2, Eye, Search } from "lucide-react";
+import { ArrowRight, CalendarDays, CheckCircle2, Eye, ScanSearch } from "lucide-react";
 import { openWhatsApp } from "@/lib/whatsapp";
 
 const WhatsAppIcon = (props: SVGProps<SVGSVGElement>) => (
@@ -13,82 +12,81 @@ const WhatsAppIcon = (props: SVGProps<SVGSVGElement>) => (
 const serviceCards = [
   {
     id: "keratoconus-treatment",
-    extraAnchors: ["scleral-lenses", "contact-lenses"],
     icon: Eye,
     badge: "MOST POPULAR",
-    badgeColor: "bg-secondary text-white",
+    badgeClass: "bg-[#25B4B3]/12 text-[#0f766e] border border-[#25B4B3]/25",
     title: "Specialty Contact Lenses",
     description:
-      "Custom engineered contact lenses designed specifically for keratoconus and corneal irregularities with advanced vision correction.",
+      "Scleral lenses custom-fitted for your exact cornea shape. If regular glasses or lenses stopped working for you — this is your answer.",
     keyPoints: [
-      "98% success rate in vision improvement",
-      "Results visible within 24-48 hours",
-      "Reversible and adjustable lens design",
+      "98% of our patients achieve clear, comfortable vision",
+      "Clear improvement visible from your very first fitting",
+      "Adjusted anytime as your eye or prescription changes",
     ],
-    accentClass: "from-[#4facfe] to-[#00d9e7]",
     whatsappFlow: "scheduleFitting" as const,
-    actionLabel: "Schedule Fitting",
+    actionLabel: "Book Your Scleral Lens Fitting",
+    learnMoreTarget: "treatment-journey",
   },
   {
     id: "corneal-mapping",
-    icon: Search,
-    badge: "AI-POWERED",
-    badgeColor: "bg-primary text-white",
-    title: "Advanced Corneal Mapping",
+    icon: ScanSearch,
+    badge: "FIRST STEP",
+    badgeClass: "bg-[#4facfe]/14 text-[#1d4ed8] border border-[#4facfe]/25",
+    title: "Corneal Topography & Keratoconus Assessment",
     description:
-      "Precision 3D corneal mapping using AI technology to understand corneal shape and design optimal eye treatment.",
+      "Before we fit any lens, we map your cornea in detail. This is how we understand your keratoconus — and why our fittings are so accurate.",
     keyPoints: [
-      "High-resolution 3D corneal imaging",
-      "AI-optimized lens parameter design",
-      "Real-time vision assessment monitoring",
+      "Detailed corneal topography scan",
+      "Keratoconus grading & cone location mapping",
+      "Honest explanation of your condition in simple language",
     ],
-    accentClass: "from-[#25B4B3] to-[#27AE60]",
     whatsappFlow: "bookMapping" as const,
-    actionLabel: "Book Mapping",
+    actionLabel: "Start With a Corneal Assessment",
+    learnMoreTarget: "treatment-journey",
   },
   {
-    id: "glare-reduction",
-    icon: Activity,
-    badge: "INNOVATIVE",
-    badgeColor: "bg-orange text-white",
-    title: "Glare & Light Sensitivity Therapy",
+    id: "scleral-monthly-plan",
+    icon: CalendarDays,
+    badge: "FLEXIBLE PLAN",
+    badgeClass: "bg-[#22c55e]/12 text-[#166534] border border-[#22c55e]/25",
+    title: "Scleral Lenses - Starting ₹3,500/Month",
     description:
-      "Comprehensive treatment programs to reduce glare, manage light sensitivity, and maximize vision improvement.",
+      "Clear vision for both eyes — without a large upfront cost. Most patients are surprised by how accessible this is.",
     keyPoints: [
-      "Glare reduction treatment protocols",
-      "Light sensitivity management",
-      "Enhanced daily vision performance",
+      "Both eyes covered in one plan",
+      "No large one-time payment",
+      "Adjust or upgrade anytime",
     ],
-    accentClass: "from-[#173B8D] to-[#4facfe]",
-    whatsappFlow: "startProgram" as const,
-    actionLabel: "Start Program",
+    whatsappFlow: "consultation" as const,
+    actionLabel: "Check If This Plan Works for You",
+    learnMoreTarget: "treatment-journey",
   },
 ] as const;
 
 const journeySteps = [
   {
     step: "1",
-    title: "Vision Assessment",
-    desc: "Comprehensive eye exam and advanced corneal mapping analysis.",
-    duration: "1-2 hours",
+    title: "Corneal Mapping & Keratoconus Assessment",
+    desc: "We start by understanding your cornea — its exact shape, keratoconus stage, and how it's affecting your vision. No rush. We explain everything clearly.",
+    duration: "Detailed Scan",
   },
   {
     step: "2",
-    title: "Custom Lens Design",
-    desc: "AI-powered specialty contact lens design for your corneal shape.",
-    duration: "3-5 business days",
+    title: "Personalised Scleral & RGP Lens Selection",
+    desc: "Based on your corneal map, we select and customise the exact scleral or RGP lens parameters for your eye. Every detail is matched to your cornea — not a standard size.",
+    duration: "Custom Fit",
   },
   {
     step: "3",
-    title: "Professional Fitting",
-    desc: "Expert lens fitting with vision correction training and refinement.",
-    duration: "1-2 hours",
+    title: "Lens Ordered & Prepared for You",
+    desc: "We fit the lens, check your vision, and make sure you are comfortable wearing it. We show you how to insert and remove it with confidence — at your own pace.",
+    duration: "Comfort Training",
   },
   {
     step: "4",
-    title: "Ongoing Eye Health",
-    desc: "Monitoring, adjustments, and comprehensive follow-up care.",
-    duration: "Ongoing",
+    title: "Ongoing Care & Keratoconus Monitoring",
+    desc: "Keratoconus changes over time. We monitor your cornea regularly, adjust your lenses when needed, and make sure your vision stays stable — year after year.",
+    duration: "Long-Term Care",
   },
 ] as const;
 
@@ -102,94 +100,62 @@ const Services = () => {
       <div className="container mx-auto px-4">
         <div className="max-w-6xl mx-auto">
           <h2 className="text-3xl sm:text-4xl font-bold text-center mb-4">
-            Advanced Eye Care Solutions
+            What We Do at KeratoCare
           </h2>
-          <p className="text-center text-muted-foreground mb-16 max-w-2xl mx-auto">
-            KeratoCare offers premium keratoconus treatment and advanced eye
-            health services tailored to your specific vision needs.
+          <p className="mx-auto mb-14 max-w-3xl text-center text-muted-foreground">
+            We don't offer everything. We offer exactly what keratoconus patients need.
+            Most of our patients visited 2-3 other clinics before finding us. This is where the answers finally come.
           </p>
 
-          <div className="grid grid-cols-1 gap-6 lg:grid-cols-3 mb-16">
+          <div className="mb-16 grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-3">
             {serviceCards.map((service) => {
               const Icon = service.icon;
-              const isFeatured = service.id === "keratoconus-treatment";
 
               return (
                 <Card
                   key={service.id}
                   id={service.id}
-                  className={`group relative flex h-full cursor-pointer flex-col overflow-hidden rounded-2xl border transform-gpu transition-all [transition-duration:350ms] [transition-timing-function:ease] will-change-transform ${
-                    isFeatured
-                      ? "border-sky-100/80 bg-gradient-to-br from-[#4facfe]/20 via-white to-[#27AE60]/18 shadow-[0_14px_34px_rgba(79,172,254,0.14)] hover:-translate-y-1.5 hover:scale-[1.005] hover:shadow-[0_24px_48px_rgba(31,78,121,0.16)]"
-                      : "border-slate-200/80 bg-white shadow-[0_12px_28px_rgba(15,23,42,0.08)] hover:-translate-y-2 hover:scale-[1.01] hover:border-[rgba(34,197,94,0.25)] hover:shadow-[0_20px_45px_rgba(0,0,0,0.12)]"
-                  }`}
+                  className="group relative flex h-full flex-col overflow-hidden rounded-[28px] border border-slate-200/80 bg-white/95 shadow-[0_16px_38px_-26px_rgba(15,23,42,0.28)] transition-all duration-300 hover:-translate-y-1 hover:border-sky-200/70 hover:shadow-[0_26px_56px_-34px_rgba(31,78,121,0.32)]"
                 >
-                  <span
-                    aria-hidden="true"
-                    className="absolute inset-x-0 top-0 z-10 h-[3px] origin-left scale-x-0 transform-gpu bg-gradient-to-r from-[#22c55e] to-[#06b6d4] transition-transform [transition-duration:350ms] [transition-timing-function:ease] group-hover:scale-x-100"
-                  />
+                  <div className="absolute inset-x-0 top-0 h-1.5 bg-gradient-to-r from-[#4facfe] via-[#25B4B3] to-[#27AE60] opacity-85" />
 
-                  {service.extraAnchors?.map((anchorId) => (
-                    <span
-                      key={anchorId}
-                      id={anchorId}
-                      aria-hidden="true"
-                      className="absolute -top-24 h-0 w-0"
-                    />
-                  ))}
-
-                  <div className="p-6 flex h-full flex-col">
-                    <div className="mb-4 text-center">
-                      <div className="relative mb-4 inline-flex">
-                        <div
-                          className={`flex h-16 w-16 items-center justify-center rounded-full border shadow-[0_10px_24px_rgba(15,23,42,0.08)] transition-all [transition-duration:350ms] [transition-timing-function:ease] group-hover:scale-[1.04] group-hover:shadow-[0_18px_36px_rgba(34,197,94,0.16)] ${
-                            isFeatured
-                              ? "border-white/70 bg-gradient-to-br from-white/95 via-[#f1f9ff] to-[#edfdf4]"
-                              : "border-slate-100 bg-gradient-to-br from-white via-slate-50 to-emerald-50"
-                          }`}
-                        >
-                          <Icon className="h-8 w-8 text-primary transition-transform duration-500 group-hover:-translate-y-0.5 group-hover:scale-105" />
-                        </div>
-                        <span className={`absolute -right-1 -top-1 rounded-full px-2 py-1 text-[10px] font-bold ${service.badgeColor} shadow-sm`}>
-                          {service.badge}
-                        </span>
-                      </div>
-
-                      <h3 className="text-xl font-bold text-gray-900 mb-2">{service.title}</h3>
-                      <p className="text-sm leading-relaxed text-muted-foreground">
-                        {service.description}
-                      </p>
+                  <div className="flex h-full flex-col p-6 sm:p-7">
+                    <div className="mb-4 flex items-center justify-between gap-3">
+                      <span className={`inline-flex rounded-full px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.16em] ${service.badgeClass}`}>
+                        {service.badge}
+                      </span>
+                      <span className="inline-flex h-14 w-14 items-center justify-center rounded-full border border-slate-200 bg-gradient-to-br from-white to-sky-50 text-primary shadow-[0_10px_24px_-16px_rgba(15,23,42,0.35)]">
+                        <Icon className="h-7 w-7" />
+                      </span>
                     </div>
 
-                    <div className="mb-6 flex-grow">
-                      <ul className="space-y-2.5">
+                    <h3 className="mb-3 text-xl font-bold leading-tight text-slate-900">
+                      {service.title}
+                    </h3>
+                    <p className="mb-5 text-sm leading-relaxed text-slate-600">
+                      {service.description}
+                    </p>
+
+                    <div className="mb-7 flex-grow">
+                      <ul className="space-y-3">
                         {service.keyPoints.map((point) => (
                           <li key={point} className="flex items-start gap-2 text-sm">
-                            <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-secondary" />
-                            <span className="text-gray-700">{point}</span>
+                            <CheckCircle2 className="mt-0.5 h-4.5 w-4.5 shrink-0 text-secondary" />
+                            <span className="text-slate-700">{point}</span>
                           </li>
                         ))}
                       </ul>
                     </div>
 
-                    <div className="mt-auto flex flex-col gap-3">
+                    <div className="mt-auto flex flex-col gap-2.5">
                       <button
                         type="button"
                         onClick={() => openWhatsApp(service.whatsappFlow)}
-                        className="flex w-full transform-gpu items-center justify-center gap-2 rounded-xl bg-[#25D366] py-3 font-semibold text-white shadow-[0_10px_24px_rgba(37,211,102,0.18)] transition-all duration-300 [transition-timing-function:ease] group-hover:bg-[#2ad968] group-hover:shadow-[0_16px_32px_rgba(37,211,102,0.22)] hover:-translate-y-0.5 hover:shadow-[0_18px_34px_rgba(37,211,102,0.28)] active:scale-[0.98]"
+                        className="flex w-full items-center justify-center gap-2 rounded-xl bg-[#25D366] px-4 py-3 text-sm font-bold text-white shadow-[0_10px_24px_rgba(37,211,102,0.18)] transition-all duration-300 hover:-translate-y-0.5 hover:bg-[#20c65f] hover:shadow-[0_16px_32px_rgba(37,211,102,0.24)] active:scale-[0.99]"
                       >
                         <WhatsAppIcon className="h-5 w-5" />
                         <span>{service.actionLabel}</span>
                       </button>
-
-                      <Button
-                        type="button"
-                        variant="outline"
-                        onClick={() => scrollToSection("contact")}
-                        className="w-full rounded-xl border-slate-200 py-3 text-sm font-semibold"
-                      >
-                        Learn More
-                      </Button>
                     </div>
                   </div>
                 </Card>
@@ -198,14 +164,14 @@ const Services = () => {
           </div>
 
           <div
-            id="assessment"
+            id="treatment-journey"
             className="scroll-mt-24 rounded-3xl bg-white/95 p-8 shadow-xl ring-1 ring-slate-100 md:p-10"
           >
             <h3
-              id="vision-assessment"
+              id="treatment-journey-heading"
               className="scroll-mt-24 text-2xl font-bold text-center mb-12"
             >
-              Your Eye Care Treatment Journey
+              What Happens When You Visit Us — Step by Step
             </h3>
 
             <div className="relative grid gap-6 md:grid-cols-4 md:gap-5">
@@ -239,12 +205,16 @@ const Services = () => {
               ))}
             </div>
 
+            <p className="mt-8 text-center text-sm text-slate-600">
+              Most patients feel completely guided throughout. You'll never feel lost or rushed at KeratoCare.
+            </p>
+
             <div className="mt-12 text-center reveal">
               <a
                 href="#contact"
                 className="btn-shimmer inline-flex items-center gap-2 px-8 py-4 rounded-full font-bold text-white text-lg bg-gradient-to-r from-[#4facfe] to-[#25B4B3] shadow-xl shadow-blue-400/25 hover:scale-105 hover:shadow-blue-400/45 active:scale-95 transition-all duration-200"
               >
-                Start Your Journey Today
+                Book Your First Consultation
                 <ArrowRight className="w-5 h-5" />
               </a>
             </div>

@@ -64,10 +64,17 @@ VITE_ENABLE_ADMIN_PANEL=true
 VITE_ADMIN_PANEL_PASSWORD=your-internal-password
 ```
 
+Optional Google Sheets lead capture:
+
+```bash
+VITE_GOOGLE_SHEETS_WEB_APP_URL=https://script.google.com/macros/s/your-deployed-web-app/exec
+```
+
 Notes:
 
 - Leave `VITE_ENABLE_ADMIN_PANEL` unset in public production deployments unless you intentionally want to expose the internal route.
 - Client-side passwords are not a substitute for server-side authentication. For a real production admin workflow, move admin access behind secure backend auth.
+- The Google Sheets URL should point to a deployed Google Apps Script web app that appends each contact form submission into your sheet.
 
 ## Current Routes
 

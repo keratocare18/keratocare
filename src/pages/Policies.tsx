@@ -43,11 +43,29 @@ const Policies = () => {
 
   useEffect(() => {
     const hash = window.location.hash.replace("#", "");
-    if (hash) {
-      setTimeout(() => {
-        document.getElementById(hash)?.scrollIntoView({ behavior: "smooth" });
-      }, 300);
+    if (!hash) {
+      return undefined;
     }
+
+    let firstFrameId = 0;
+    let secondFrameId = 0;
+
+    // PERF: A double rAF waits for the route/layout paint without a fixed timer,
+    // so hash scrolling stays responsive across fast and slow devices alike.
+    firstFrameId = window.requestAnimationFrame(() => {
+      secondFrameId = window.requestAnimationFrame(() => {
+        document.getElementById(hash)?.scrollIntoView({ behavior: "smooth" });
+      });
+    });
+
+    return () => {
+      if (firstFrameId) {
+        window.cancelAnimationFrame(firstFrameId);
+      }
+      if (secondFrameId) {
+        window.cancelAnimationFrame(secondFrameId);
+      }
+    };
   }, []);
 
   useEffect(() => {
@@ -208,10 +226,12 @@ const Policies = () => {
                     </h3>
                     <p>
                       Contact form submissions are temporarily stored locally on
-                      your device to facilitate our admin review process. We
-                      implement reasonable technical safeguards to protect your
-                      information. However, no method of electronic transmission
-                      or storage is 100% secure.
+                      your device to facilitate our admin review process and
+                      may also be sent to our Google Sheets lead log for
+                      internal tracking. We implement reasonable technical
+                      safeguards to protect your information. However, no
+                      method of electronic transmission or storage is 100%
+                      secure.
                     </p>
                   </div>
 
@@ -220,10 +240,11 @@ const Policies = () => {
                       Third-Party Services
                     </h3>
                     <p>
-                      Our website uses Google Maps for location display.
-                      Google&apos;s privacy policy governs any data collected
-                      through that service. We are not responsible for the
-                      privacy practices of third-party platforms.
+                      Our website uses Google Maps for location display and
+                      Google Sheets via a Google Apps Script web app for contact
+                      form storage. Google&apos;s privacy policy governs any data
+                      collected through those services. We are not responsible
+                      for the privacy practices of third-party platforms.
                     </p>
                   </div>
 
@@ -235,7 +256,7 @@ const Policies = () => {
                       You have the right to access, correct, or request deletion
                       of your personal information. To exercise these rights,
                       contact us at keratocare.contact@gmail.com or call +91
-                      72768 61131.
+                      84328 61131.
                     </p>
                   </div>
                 </div>
@@ -597,10 +618,10 @@ const Policies = () => {
                           <div>
                             <p className="font-semibold text-gray-900">Phone</p>
                             <a
-                              href="tel:+917276861131"
+                              href="tel:+918432861131"
                               className="text-sm text-blue-600 hover:underline"
                             >
-                              +91 72768 61131
+                              +91 84328 61131
                             </a>
                           </div>
                         </div>
@@ -663,7 +684,7 @@ const Policies = () => {
           </p>
           <div className="flex flex-wrap justify-center gap-3">
             <a
-              href="tel:+917276861131"
+              href="tel:+918432861131"
               className="rounded-full bg-white px-6 py-2.5 text-sm font-semibold text-blue-900 transition-transform hover:scale-105"
             >
               Call Us

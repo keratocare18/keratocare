@@ -3,6 +3,7 @@ import { AlertTriangle, CheckCircle2, Eye, RefreshCcw, Sparkles } from "lucide-r
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
+import { openAssessmentBooking } from "@/lib/whatsapp";
 
 type AssessmentOption = {
   label: string;
@@ -129,6 +130,23 @@ const AssessmentSection = () => {
 
   const progressPercent = Math.round((answeredCount / questions.length) * 100);
   const activeQuestion = questions[currentStep];
+  const selectedResponses = useMemo(
+    () =>
+      questions
+        .map((question, index) => {
+          const selectedOption = question.options.find(
+            (option) => option.points === answers[index],
+          );
+
+          if (!selectedOption) {
+            return null;
+          }
+
+          return `${question.question} - ${selectedOption.label}`;
+        })
+        .filter((response): response is string => response !== null),
+    [answers],
+  );
 
   const handleSelect = (optionPoints: number) => {
     setAnswers((previous) => {
@@ -180,9 +198,10 @@ const AssessmentSection = () => {
           </div>
 
           <div className="mb-6 h-2.5 w-full overflow-hidden rounded-full bg-slate-100">
+            {/* PERF: Scaling a full-width bar avoids width animation reflow while the quiz progresses. */}
             <div
-              className="h-full rounded-full bg-gradient-to-r from-[#4facfe] to-[#25B4B3] transition-all duration-500"
-              style={{ width: `${progressPercent}%` }}
+              className="h-full origin-left rounded-full bg-gradient-to-r from-[#4facfe] to-[#25B4B3] transition-transform duration-500 transform-gpu will-change-transform"
+              style={{ transform: `scaleX(${progressPercent / 100})` }}
             />
           </div>
 
@@ -267,9 +286,13 @@ const AssessmentSection = () => {
                   <span>{scorePercent}%</span>
                 </div>
                 <div className="h-3 w-full overflow-hidden rounded-full bg-slate-100">
+                  {/* PERF: The result meter now animates with transform so score updates stay on the compositor. */}
                   <div
-                    className={cn("h-full rounded-full bg-gradient-to-r transition-all duration-500", riskBand.barClass)}
-                    style={{ width: `${scorePercent}%` }}
+                    className={cn(
+                      "h-full origin-left bg-gradient-to-r transition-transform duration-500 transform-gpu will-change-transform",
+                      riskBand.barClass,
+                    )}
+                    style={{ transform: `scaleX(${scorePercent / 100})` }}
                   />
                 </div>
               </div>
@@ -286,7 +309,14 @@ const AssessmentSection = () => {
                 <Button
                   type="button"
                   className="btn-shimmer btn-medical-primary rounded-full px-5 text-white"
-                  onClick={() => document.getElementById("contact")?.scrollIntoView({ behavior: "smooth" })}
+                  onClick={() =>
+                    openAssessmentBooking({
+                      recommendation: riskBand.guidance,
+                      responses: selectedResponses,
+                      riskScorePercent: scorePercent,
+                      riskTitle: riskBand.title,
+                    })
+                  }
                 >
                   Book Free Vision Assessment
                 </Button>

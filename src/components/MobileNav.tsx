@@ -1,38 +1,79 @@
-import { useEffect, useState } from "react";
+import { memo, useEffect, useState } from "react";
 import { Calendar, ClipboardCheck, Home, Info, Mail } from "lucide-react";
-import { openWhatsApp } from "@/lib/whatsapp";
+import { openAssessmentBooking } from "@/lib/whatsapp";
 
-const MobileNav = () => {
+const observableSections = ["hero", "services", "assessment", "about", "contact"] as const;
+
+const MobileNav = memo(() => {
   const [visible, setVisible] = useState(true);
   const [activeSection, setActiveSection] = useState("hero");
 
   useEffect(() => {
     let lastScrollY = window.scrollY;
+    let frameId = 0;
 
-    const handleScroll = () => {
+    // PERF: This nav is driven by scroll, so rAF keeps visibility updates at
+    // one paint-synced state change per frame instead of many event callbacks.
+    const updateVisibility = () => {
+      frameId = 0;
       const currentScrollY = window.scrollY;
-      setVisible(!(currentScrollY > lastScrollY && currentScrollY > 100));
+      const nextVisible = !(currentScrollY > lastScrollY && currentScrollY > 100);
+      setVisible((previous) => (previous === nextVisible ? previous : nextVisible));
       lastScrollY = currentScrollY;
-
-      const sections = ["hero", "services", "assessment", "about", "contact"] as const;
-      const current = sections.find((section) => {
-        const element = document.getElementById(section);
-        if (!element) {
-          return false;
-        }
-
-        const rect = element.getBoundingClientRect();
-        return rect.top <= 140 && rect.bottom >= 140;
-      });
-
-      if (current) {
-        setActiveSection(current === "services" ? "assessment" : current);
-      }
     };
 
-    handleScroll();
+    const handleScroll = () => {
+      if (frameId) {
+        return;
+      }
+
+      frameId = window.requestAnimationFrame(updateVisibility);
+    };
+
+    updateVisibility();
     window.addEventListener("scroll", handleScroll, { passive: true });
-    return () => window.removeEventListener("scroll", handleScroll);
+
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+      if (frameId) {
+        window.cancelAnimationFrame(frameId);
+      }
+    };
+  }, []);
+
+  useEffect(() => {
+    const sections = observableSections
+      .map((sectionId) => document.getElementById(sectionId))
+      .filter((section): section is HTMLElement => section !== null);
+
+    if (!sections.length) {
+      return undefined;
+    }
+
+    // PERF: IntersectionObserver replaces per-scroll getBoundingClientRect()
+    // checks, so active-state updates happen without layout reads in the hot path.
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const visibleEntries = entries
+          .filter((entry) => entry.isIntersecting)
+          .sort((a, b) => b.intersectionRatio - a.intersectionRatio);
+
+        const nextSection = visibleEntries[0]?.target.id;
+        if (!nextSection) {
+          return;
+        }
+
+        const mappedSection = nextSection === "services" ? "assessment" : nextSection;
+        setActiveSection((previous) => (previous === mappedSection ? previous : mappedSection));
+      },
+      {
+        threshold: [0.18, 0.36, 0.55, 0.72],
+        rootMargin: "-35% 0px -45% 0px",
+      },
+    );
+
+    sections.forEach((section) => observer.observe(section));
+    return () => observer.disconnect();
   }, []);
 
   const scrollToSection = (id: string) => {
@@ -50,7 +91,7 @@ const MobileNav = () => {
     <nav
       role="navigation"
       aria-label="Mobile navigation"
-      className={`fixed bottom-0 left-0 right-0 z-40 glass-card border-t border-white/30 shadow-2xl shadow-blue-900/10 transition-transform duration-300 md:hidden ${
+      className={`fixed bottom-0 left-0 right-0 z-40 glass-card border-t border-white/30 shadow-2xl shadow-blue-900/10 transition-transform duration-300 transform-gpu will-change-transform md:hidden ${
         visible ? "translate-y-0" : "translate-y-full"
       }`}
     >
@@ -97,7 +138,7 @@ const MobileNav = () => {
 
         <button
           type="button"
-          onClick={() => openWhatsApp("consultation")}
+          onClick={() => openAssessmentBooking()}
           aria-label="Book appointment"
           className="btn-shimmer mx-0.5 flex flex-col items-center justify-center rounded-xl bg-gradient-to-r from-[#25D366] to-[#25B4B3] text-white shadow-lg shadow-green-300/35 transition-all active:scale-95"
         >
@@ -107,6 +148,8 @@ const MobileNav = () => {
       </div>
     </nav>
   );
-};
+});
+
+MobileNav.displayName = "MobileNav";
 
 export default MobileNav;
