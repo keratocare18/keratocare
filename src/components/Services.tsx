@@ -11,23 +11,6 @@ const WhatsAppIcon = (props: SVGProps<SVGSVGElement>) => (
 
 const serviceCards = [
   {
-    id: "keratoconus-treatment",
-    icon: Eye,
-    badge: "MOST POPULAR",
-    badgeClass: "bg-[#25B4B3]/12 text-[#0f766e] border border-[#25B4B3]/25",
-    title: "Specialty Contact Lenses",
-    description:
-      "Scleral lenses custom-fitted for your exact cornea shape. If regular glasses or lenses stopped working for you — this is your answer.",
-    keyPoints: [
-      "98% of our patients achieve clear, comfortable vision",
-      "Clear improvement visible from your very first fitting",
-      "Adjusted anytime as your eye or prescription changes",
-    ],
-    whatsappFlow: "scheduleFitting" as const,
-    actionLabel: "Book Your Scleral Lens Fitting",
-    learnMoreTarget: "treatment-journey",
-  },
-  {
     id: "corneal-mapping",
     icon: ScanSearch,
     badge: "FIRST STEP",
@@ -42,6 +25,23 @@ const serviceCards = [
     ],
     whatsappFlow: "bookMapping" as const,
     actionLabel: "Start With a Corneal Assessment",
+    learnMoreTarget: "treatment-journey",
+  },
+  {
+    id: "keratoconus-treatment",
+    icon: Eye,
+    badge: "MOST POPULAR",
+    badgeClass: "bg-[#25B4B3]/12 text-[#0f766e] border border-[#25B4B3]/25",
+    title: "Specialty Contact Lenses",
+    description:
+      "Scleral lenses custom-fitted for your exact cornea shape. If regular glasses or lenses stopped working for you — this is your answer.",
+    keyPoints: [
+      "98% of our patients achieve clear, comfortable vision",
+      "Clear improvement visible from your very first fitting",
+      "Adjusted anytime as your eye or prescription changes",
+    ],
+    whatsappFlow: "scheduleFitting" as const,
+    actionLabel: "Book Your Lens Fitting",
     learnMoreTarget: "treatment-journey",
   },
   {
@@ -66,27 +66,27 @@ const serviceCards = [
 const journeySteps = [
   {
     step: "1",
-    title: "Corneal Mapping & Keratoconus Assessment",
-    desc: "We start by understanding your cornea — its exact shape, keratoconus stage, and how it's affecting your vision. No rush. We explain everything clearly.",
-    duration: "Detailed Scan",
+    title: "Detailed Eye Check",
+    desc: "First, we check your vision, corneal shape and corneal thickness in detail. We find out whether your keratoconus is stable or still progressing using scans and pachymetry. We explain your reports in simple language, so you know exactly what is happening with your eyes.",
+    duration: "Step 1",
   },
   {
     step: "2",
-    title: "Personalised Scleral & RGP Lens Selection",
-    desc: "Based on your corneal map, we select and customise the exact scleral or RGP lens parameters for your eye. Every detail is matched to your cornea — not a standard size.",
-    duration: "Custom Fit",
+    title: "Stopping Further Damage",
+    desc: "If we see that keratoconus is still progressing, our first goal is to stop it from getting worse. We may advise corneal collagen cross-linking (C3R) – a treatment that uses vitamin drops and light to make the cornea stronger and reduce the chance of future worsening.",
+    duration: "Step 2",
   },
   {
     step: "3",
-    title: "Lens Ordered & Prepared for You",
-    desc: "We fit the lens, check your vision, and make sure you are comfortable wearing it. We show you how to insert and remove it with confidence — at your own pace.",
-    duration: "Comfort Training",
+    title: "Help You See Clearly Again",
+    desc: "Once your cornea is stable, we focus on your vision. Specialty lenses like scleral or RGP lenses are custom-designed on your scans to give the clearest, most comfortable vision possible in keratoconus. Many patients are able to return to driving, studying and working comfortably with these lenses.",
+    duration: "Step 3",
   },
   {
     step: "4",
-    title: "Ongoing Care & Keratoconus Monitoring",
-    desc: "Keratoconus changes over time. We monitor your cornea regularly, adjust your lenses when needed, and make sure your vision stays stable — year after year.",
-    duration: "Long-Term Care",
+    title: "Stay Stable, Stay Confident",
+    desc: "Keratoconus is a long-term condition, so we don't just fit lenses and forget you. We review your scans and lens fit at regular intervals to be sure the cornea stays stable and your vision remains comfortable. Any time your eyes or vision change, you have a team that already knows your case in detail.",
+    duration: "Step 4",
   },
 ] as const;
 
@@ -169,9 +169,9 @@ const Services = () => {
           >
             <h3
               id="treatment-journey-heading"
-              className="scroll-mt-24 text-2xl font-bold text-center mb-12"
+              className="scroll-mt-24 mb-12 text-center text-3xl font-extrabold tracking-tight text-slate-950 sm:text-4xl"
             >
-              What Happens When You Visit Us — Step by Step
+              What Happens When You Visit Us — Step by Step.
             </h3>
 
             <div className="relative grid gap-6 md:grid-cols-4 md:gap-5">
@@ -194,9 +194,9 @@ const Services = () => {
                       <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-gradient-primary text-lg font-bold text-white shadow-lg">
                         {item.step}
                       </div>
-                      <h4 className="mb-2 font-bold text-foreground">{item.title}</h4>
-                      <p className="mb-4 text-sm text-muted-foreground">{item.desc}</p>
-                      <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-medium bg-blue-50 text-blue-700 border border-blue-100">
+                      <h4 className="mb-2 text-lg font-bold leading-snug text-slate-900 sm:text-xl">{item.title}</h4>
+                      <p className="mb-4 text-sm leading-7 text-slate-600">{item.desc}</p>
+                      <span className="inline-flex items-center gap-1 rounded-full border border-blue-100 bg-blue-50 px-3 py-1 text-xs font-semibold text-blue-700">
                         {item.duration}
                       </span>
                     </div>

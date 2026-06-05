@@ -4,7 +4,6 @@ import Hero from "@/components/Hero";
 import MobileNav from "@/components/MobileNav";
 import FloatingButtons from "@/components/FloatingButtons";
 import LazySection from "@/components/LazySection";
-import AssessmentSection from "@/components/AssessmentSection";
 
 const VisionSlider = lazy(() => import("@/components/VisionSlider"));
 const Services = lazy(() => import("@/components/Services"));
@@ -155,9 +154,7 @@ const Index = () => {
           className="reveal"
           placeholderHeight={980}
         />
-        <div className="reveal reveal-delay-1">
-          <AssessmentSection />
-        </div>
+        {/* Assessment section removed per request */}
         <LazySection
           component={About}
           className="reveal reveal-delay-1"

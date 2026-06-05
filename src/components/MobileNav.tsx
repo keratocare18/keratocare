@@ -116,14 +116,15 @@ const MobileNav = memo(() => {
           <span>About</span>
         </button>
 
+        {/* Mobile: assessment section removed from page; point this item to Services instead to avoid broken links */}
         <button
           type="button"
-          onClick={() => scrollToSection("assessment")}
-          aria-label="Go to Assess"
-          className={itemClass("assessment")}
+          onClick={() => scrollToSection("services")}
+          aria-label="Go to Services"
+          className={itemClass("services")}
         >
           <ClipboardCheck className="h-5 w-5" />
-          <span>Assess</span>
+          <span>Services</span>
         </button>
 
         <button

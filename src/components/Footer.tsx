@@ -26,11 +26,6 @@ const serviceLinks = [
     title: "See glare reduction eye care solutions",
   },
   {
-    href: "#assessment",
-    label: "Vision Assessment",
-    title: "View the KeratoCare free vision risk assessment",
-  },
-  {
     href: "#scleral-lenses",
     label: "Scleral Lenses",
     title: "Discover scleral lenses for keratoconus",
@@ -57,11 +52,6 @@ const whyLinks = [
     href: "#testimonials",
     label: "Patient Success Stories",
     title: "Read KeratoCare patient success stories",
-  },
-  {
-    href: "#assessment",
-    label: "Free Vision Assessment",
-    title: "Book a free vision assessment with KeratoCare",
   },
   {
     href: "#services",
@@ -141,18 +131,12 @@ const FooterNavLink = ({ href, label, title }: FooterLinkProps) => (
 );
 
 const FooterBrandLogo = () => (
-  <div className="relative flex min-h-[72px] w-[280px] flex-col items-start justify-start overflow-visible pt-1 pb-1 sm:min-h-[80px] sm:w-[310px]">
+  <div className="flex min-h-[72px] w-[280px] flex-col items-start justify-start overflow-visible pt-1 pb-1 sm:min-h-[80px] sm:w-[310px]">
     <img
       src="/logo.png"
       alt="KeratoCare Advanced Contact Lens Care and Support"
       className="block h-auto w-full object-contain object-left drop-shadow-[0_10px_22px_rgba(37,180,179,0.10)]"
     />
-    <span
-      aria-hidden="true"
-      className="absolute right-0 top-1 text-[11px] font-semibold leading-none text-slate-700/75 sm:text-xs"
-    >
-      ®
-    </span>
   </div>
 );
 
@@ -214,10 +198,10 @@ const Footer = () => {
           <button
             type="button"
             onClick={() => openAssessmentBooking()}
-            title="Book your free eye assessment with KeratoCare on WhatsApp"
+            title="Book your eye assessment with KeratoCare on WhatsApp"
             className="mt-6 inline-flex h-12 items-center justify-center gap-2 rounded-full border border-white/65 bg-white px-6 text-sm font-semibold text-[#173B8D] shadow-lg shadow-cyan-900/10 transition-all duration-300 hover:-translate-y-0.5 hover:bg-sky-50 hover:shadow-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/55 focus-visible:ring-offset-0 lg:mt-0"
           >
-            Book Free Assessment
+            Book Assessment
             <ArrowUpRight className="h-4 w-4" />
           </button>
         </div>
@@ -264,7 +248,7 @@ const Footer = () => {
                 <span className="inline-flex h-9 w-9 items-center justify-center rounded-full bg-sky-100 text-[#173B8D]">
                   <Clock3 className="h-4 w-4" />
                 </span>
-                <span>Mon-Sat: 10:00 AM - 7:00 PM | Sun: By Appointment</span>
+                <span>Mon-Sun : 10:00 AM - 7:00 PM | By Appointment</span>
               </div>
             </div>
           </div>

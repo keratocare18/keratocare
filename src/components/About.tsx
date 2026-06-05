@@ -5,6 +5,9 @@ import { Award, Heart, Shield, ShieldCheck, Star, TrendingUp, Users, Eye } from 
 import keratoPhoto from "@/assets/kerato.jpg";
 import CountUp from "react-countup";
 import { useInView } from "react-intersection-observer";
+import { fetchPatientReviewsFromGoogleSheets, type PatientReview } from "@/lib/google-sheets";
+
+const REVIEW_SKELETON_COUNT = 3;
 
 const stats = [
   { value: 500, label: "Keratoconus & irregular cornea patients", suffix: "+", decimals: 0, delay: "reveal-delay-1" },
@@ -13,36 +16,12 @@ const stats = [
   { value: "4.9 / 5.0", label: "Patient rating", delay: "reveal-delay-4" },
 ] as const;
 
-const testimonials = [
-  {
-    name: "Priya M.",
-    location: "Pune, 28",
-    text: "My vision went from completely blurry and distorted to crisp and clear. The team at KeratoCare explained everything and made me feel confident about the lenses. It changed my life.",
-    before: "-8.50 (severe keratoconus)",
-    after: "20/25 vision (corrected)",
-    lens: "Scleral",
-  },
-  {
-    name: "Amit K.",
-    location: "Pune, 35",
-    text: "I was told I'd never see clearly again. KeratoCare proved them wrong. The custom lenses are comfortable and my vision is better than it has been in years.",
-    before: "Could not drive at night",
-    after: "Clear night vision",
-    lens: "Hybrid",
-  },
-  {
-    name: "Sneha R.",
-    location: "Pune, 24",
-    text: "Professional, knowledgeable, and caring. The entire process was smooth and the results exceeded my expectations. Highly recommend KeratoCare.",
-    before: "Struggled with reading",
-    after: "Reading without strain",
-    lens: "Mini Scleral",
-  },
-] as const;
-
 const About = () => {
   const { ref, inView } = useInView({ triggerOnce: true, threshold: 0.2 });
   const [reducedMotion, setReducedMotion] = useState(false);
+  const [reviews, setReviews] = useState<PatientReview[]>([]);
+  const [reviewsLoading, setReviewsLoading] = useState(true);
+  const [reviewsError, setReviewsError] = useState(false);
 
   useEffect(() => {
     try {
@@ -52,6 +31,57 @@ const About = () => {
       // Ignore unsupported environments.
     }
   }, []);
+
+  useEffect(() => {
+    let isMounted = true;
+
+    const loadReviews = async () => {
+      setReviewsLoading(true);
+      setReviewsError(false);
+
+      try {
+        const nextReviews = await fetchPatientReviewsFromGoogleSheets();
+
+        if (!isMounted) {
+          return;
+        }
+
+        setReviews(nextReviews);
+      } catch {
+        if (!isMounted) {
+          return;
+        }
+
+        setReviews([]);
+        setReviewsError(true);
+      } finally {
+        if (isMounted) {
+          setReviewsLoading(false);
+        }
+      }
+    };
+
+    void loadReviews();
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
+  const displayedReviews = reviews.slice(0, 6);
+  const skeletonCards = Array.from({ length: REVIEW_SKELETON_COUNT });
+
+  const renderStars = (ratingText: string) => {
+    const rating = Number.parseInt(ratingText, 10);
+    const activeStars = Number.isFinite(rating) ? Math.max(0, Math.min(5, rating)) : 0;
+
+    return Array.from({ length: 5 }).map((_, index) => (
+      <Star
+        key={index}
+        className={`w-4 h-4 ${index < activeStars ? "fill-amber-400 text-amber-400" : "text-amber-400/35"}`}
+      />
+    ));
+  };
 
   return (
     <section id="about" className="py-20 bg-background" ref={ref}>
@@ -212,50 +242,82 @@ const About = () => {
               Patient Success Stories
             </h3>
             <div className="grid gap-6 md:grid-cols-3">
-              {testimonials.map((testimonial) => (
-                <Card
-                  key={testimonial.name}
-                  className="relative overflow-hidden p-6"
-                >
-                  <span className="absolute top-2 left-3 text-7xl font-serif text-blue-100 leading-none select-none pointer-events-none">
-                    "
-                  </span>
-
-                  <div className="relative z-10">
-                    <div className="mb-3 flex gap-0.5">
-                      {[...Array(5)].map((_, index) => (
-                        <Star
-                          key={index}
-                          className="w-4 h-4 fill-amber-400 text-amber-400"
-                        />
-                      ))}
-                    </div>
-
-                    <p className="mb-4 text-sm italic text-foreground">
-                      {testimonial.text}
-                    </p>
-
-                    <div className="space-y-2 border-t pt-4 text-sm">
-                      <div className="font-semibold text-foreground">
-                        {testimonial.name}
-                        <span className="ml-1 font-normal text-muted-foreground">
-                          | {testimonial.location}
-                        </span>
+              {reviewsLoading ? (
+                skeletonCards.map((_, index) => (
+                  <Card key={index} className="relative overflow-hidden p-6">
+                    <div className="space-y-4 animate-pulse">
+                      <div className="flex gap-0.5">
+                        {Array.from({ length: 5 }).map((__, starIndex) => (
+                          <div
+                            key={starIndex}
+                            className="h-4 w-4 rounded-full bg-slate-200/80"
+                          />
+                        ))}
                       </div>
-                      <div className="text-muted-foreground">
-                        Before: {testimonial.before}
+                      <div className="space-y-2">
+                        <div className="h-4 w-11/12 rounded-full bg-slate-200/80" />
+                        <div className="h-4 w-10/12 rounded-full bg-slate-200/80" />
+                        <div className="h-4 w-8/12 rounded-full bg-slate-200/80" />
                       </div>
-                      <div className="flex items-center gap-1 font-semibold text-secondary">
-                        <TrendingUp className="h-3 w-3 text-green-500" />
-                        After: {testimonial.after}
-                      </div>
-                      <div className="text-xs text-muted-foreground">
-                        Lens Type: {testimonial.lens}
+                      <div className="space-y-2 border-t pt-4">
+                        <div className="h-4 w-2/3 rounded-full bg-slate-200/80" />
+                        <div className="h-4 w-3/4 rounded-full bg-slate-200/80" />
+                        <div className="h-4 w-1/2 rounded-full bg-slate-200/80" />
                       </div>
                     </div>
+                  </Card>
+                ))
+              ) : reviewsError ? (
+                <Card className="relative overflow-hidden p-6 md:col-span-3">
+                  <div className="relative z-10 text-center text-sm font-medium text-slate-500">
+                    Unable to load patient reviews.
                   </div>
                 </Card>
-              ))}
+              ) : displayedReviews.length === 0 ? (
+                <Card className="relative overflow-hidden p-6 md:col-span-3">
+                  <div className="relative z-10 text-center text-sm text-muted-foreground">
+                    Patient reviews will appear here soon.
+                  </div>
+                </Card>
+              ) : (
+                displayedReviews.map((review) => (
+                  <Card
+                    key={`${review.name}-${review.city}-${review.age}`}
+                    className="relative overflow-hidden p-6"
+                  >
+                    <span className="absolute top-2 left-3 text-7xl font-serif text-blue-100 leading-none select-none pointer-events-none">
+                      "
+                    </span>
+
+                    <div className="relative z-10">
+                      <div className="mb-3 flex gap-0.5">{renderStars(review.rating)}</div>
+
+                      <p className="mb-4 text-sm italic text-foreground">
+                        {review.review}
+                      </p>
+
+                      <div className="space-y-2 border-t pt-4 text-sm">
+                        <div className="font-semibold text-foreground">
+                          {review.name}
+                          <span className="ml-1 font-normal text-muted-foreground">
+                            | {review.city}, {review.age}
+                          </span>
+                        </div>
+                        <div className="text-muted-foreground">
+                          Before: {review.beforeCondition}
+                        </div>
+                        <div className="flex items-center gap-1 font-semibold text-secondary">
+                          <TrendingUp className="h-3 w-3 text-green-500" />
+                          After: {review.afterResult}
+                        </div>
+                        <div className="text-xs text-muted-foreground">
+                          Lens Type: {review.lensType}
+                        </div>
+                      </div>
+                    </div>
+                  </Card>
+                ))
+              )}
             </div>
           </div>
         </div>

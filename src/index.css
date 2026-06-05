@@ -142,7 +142,7 @@ body { min-height: 100svh; }
    will-change keep them in their own compositor layers. */
 .blob {
   border-radius: 50%;
-  filter: blur(80px);
+  filter: blur(90px);
   opacity: 0.18;
   position: absolute;
   pointer-events: none;
@@ -176,7 +176,7 @@ body { min-height: 100svh; }
 .hero-text-box {
   background: transparent;
   border-radius: 16px;
-  padding: 2rem 2.4rem;
+  padding: 1.35rem 1.75rem;
   display: inline-block;
   max-width: 620px;
   box-shadow: none;
@@ -184,6 +184,72 @@ body { min-height: 100svh; }
   opacity: 0;
   animation: fadeUpBox 0.6s ease forwards;
   animation-delay: 0.1s;
+}
+
+/* New Hero visual tokens per design spec */
+.bg-gradient-hero-new {
+  background: linear-gradient(135deg, #dfeefc 0%, #c9e7fa 35%, #b7e4f8 70%, #bff1ea 100%);
+}
+
+.hero-top-label {
+  color: #0B3D91;
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: 0.35em;
+  text-transform: uppercase;
+  display: inline-block;
+}
+
+.hero-top-underline {
+  width: 90px;
+  height: 3px;
+  border-radius: 2px;
+  margin-top: 10px;
+  background: linear-gradient(90deg,#2563EB,#25B4B3);
+}
+
+.hero-headline-line-sm {
+  font-size: clamp(2.5rem, 4.8vw, 4.875rem);
+  font-weight: 600;
+  line-height: 0.96;
+  color: #081B4B;
+}
+
+.hero-emphasis-gradient {
+  background: linear-gradient(90deg,#2563EB 0%, #1E88E5 35%, #14B8A6 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+  font-weight: 600;
+}
+
+.hero-sub-wrapper {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  max-width: 600px;
+}
+
+.hero-sub-accent {
+  width: 3px;
+  height: 54px;
+  border-radius: 4px;
+  margin-top: 6px;
+  background: linear-gradient(180deg,#2563EB,#25B4B3);
+}
+
+.hero-sub-text {
+  color: #475569;
+  font-size: 22px;
+  font-weight: 500;
+  line-height: 1.3;
+  margin: 0;
+}
+
+.hero-sub-highlight {
+  font-weight: 700;
+  color: #0F172A;
 }
 
 .hero-heading {
@@ -330,9 +396,9 @@ body { min-height: 100svh; }
     /* Gradients */
     --gradient-primary: linear-gradient(135deg, #4A90E2, #27AE60);
 
-    /* ✅ Updated hero gradient — elegant medical blue blend */
-    --gradient-hero: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
-    --gradient-hero-strong: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+    /* ✅ Updated hero gradient — slightly deeper blue → teal for premium medical feel */
+    --gradient-hero: linear-gradient(135deg, #4D95DD 0%, #63B9E7 50%, #69D5D0 100%);
+    --gradient-hero-strong: linear-gradient(135deg, #4D95DD 0%, #63B9E7 50%, #69D5D0 100%);
     --gradient-subtle: linear-gradient(180deg, hsl(0 0% 100%), hsl(210 40% 98%));
 
     /* Button Gradients */
@@ -364,14 +430,14 @@ body { min-height: 100svh; }
 @layer utilities {
   section { scroll-margin-top: 80px; }
   :root { --kc-scroll-offset: 80px; }
-  :root { --kc-hero-offset: 5.5rem; }
+  :root { --kc-hero-offset: 5rem; }
 
   @media (min-width: 640px) {
-    :root { --kc-hero-offset: 6rem; }
+    :root { --kc-hero-offset: 5.5rem; }
   }
 
   @media (min-width: 1024px) {
-    :root { --kc-hero-offset: 6.75rem; }
+    :root { --kc-hero-offset: 6.25rem; }
   }
 }
 
@@ -398,6 +464,103 @@ body { min-height: 100svh; }
     50% { transform: translateY(-10px); }
   }
 
+
+/* Mobile-only layout tweaks (do not affect desktop/laptop) */
+@media (max-width: 430px) {
+  /* Reduce hero section vertical footprint on small viewports */
+  .hero-section {
+    min-height: calc(100svh - var(--kc-hero-offset));
+    padding-top: calc(var(--kc-hero-offset) + 0.25rem);
+  }
+
+  /* Make hero image slightly shorter to avoid excessive vertical height */
+  .hero-image {
+    height: 220px !important;
+  }
+
+  /* Reduce hero text padding for narrow screens */
+  .hero-text-box {
+    padding: 0.75rem 1rem;
+    max-width: 100%;
+  }
+
+  /* Ensure floating buttons sit above the mobile nav and safe-area */
+  .kc-floating-buttons {
+    bottom: calc(4.5rem + env(safe-area-inset-bottom));
+    right: 0.5rem;
+  }
+
+  /* Slightly reduce container side padding on very small devices */
+  .container {
+    padding-left: 0.75rem;
+    padding-right: 0.75rem;
+  }
+}
+
+/* Footer: stack columns and scale logo on small screens */
+@media (max-width: 430px) {
+  footer[aria-label="Site Footer"] .container { padding-left: 0.75rem; padding-right: 0.75rem; }
+  footer[aria-label="Site Footer"] .rounded-\[30px\] { padding: 0.85rem !important; }
+  footer[aria-label="Site Footer"] .w-\[280px\] { width: 160px !important; min-height: auto !important; }
+  footer[aria-label="Site Footer"] ul { padding-left: 0; }
+  footer[aria-label="Site Footer"] .grid { grid-template-columns: 1fr !important; gap: 0.75rem !important; }
+  footer[aria-label="Site Footer"] .mt-12 { margin-top: 0.75rem !important; }
+  footer[aria-label="Site Footer"] .inline-flex.h-11.w-fit { padding: 0.45rem 0.75rem !important; }
+}
+
+/* Contact: reduce CTA padding on mobile */
+@media (max-width: 430px) {
+  #contact .py-4 { padding-top: 0.5rem !important; padding-bottom: 0.5rem !important; }
+  #contact .btn-shimmer { font-size: 0.95rem !important; }
+  #contact .h-64 { height: 12rem !important; }
+}
+
+/* Testimonials: compact cards on small screens */
+@media (max-width: 430px) {
+  #testimonials .p-6 { padding: 0.8rem !important; }
+  #testimonials .text-7xl { font-size: 3.2rem !important; line-height: 1 !important; }
+}
+
+/* Accessibility: ensure minimum touch target size on small devices */
+@media (max-width: 430px) {
+  button, a[href], a[role="button"] {
+    min-height: 44px !important;
+    min-width: 44px !important;
+    padding-left: 0.6rem !important;
+    padding-right: 0.6rem !important;
+  }
+
+  /* Floating buttons keep circular size but ensure tappable area */
+  .kc-floating-buttons a, .kc-floating-buttons button {
+    min-height: 44px !important;
+    min-width: 44px !important;
+  }
+}
+
+@media (max-width: 360px) {
+  .hero-image { height: 200px !important; }
+  .hero-heading { font-size: clamp(1.8rem, 11vw, 2.4rem); }
+}
+
+/* Services: compact cards & buttons on small screens */
+@media (max-width: 430px) {
+  #services .rounded-\[28px\] { border-radius: 12px; }
+  #services .p-6 { padding: 0.75rem !important; }
+  #services .sm\:p-7 { padding: 0.75rem !important; }
+  #services .mb-7 { margin-bottom: 0.5rem !important; }
+  #services button[class*="px-4"][class*="py-3"] { padding-top: 0.55rem !important; padding-bottom: 0.55rem !important; }
+  #services .h-14.w-14 { height: 44px !important; width: 44px !important; }
+  #services .mb-16 { margin-bottom: 1rem !important; }
+}
+
+/* About: reduce stat card min-heights and spacing on small screens */
+@media (max-width: 430px) {
+  #about .min-h-\[154px\] { min-height: 120px !important; }
+  #about .sm\:min-h-\[180px\] { min-height: 120px !important; }
+  #about .px-4 { padding-left: 0.75rem !important; padding-right: 0.75rem !important; }
+  #about .py-5 { padding-top: 0.6rem !important; padding-bottom: 0.6rem !important; }
+  #about .mb-12 { margin-bottom: 0.75rem !important; }
+}
   @keyframes shake {
     0%, 100% { transform: translateX(0); }
     25% { transform: translateX(-5px); }
@@ -476,11 +639,36 @@ body { min-height: 100svh; }
 
   /* ✅ Updated hero background with elegant medical blue */
   .bg-gradient-hero-new {
-    background: var(--gradient-hero-strong);
+      background: linear-gradient(135deg, #dfeefc 0%, #c9e7fa 35%, #b7e4f8 70%, #bff1ea 100%);
     background-repeat: no-repeat;
     background-size: cover;
-    color: hsl(210 15% 20%); /* darker readable text */
+      color: #081B4B;
   }
+
+    .hero-image-shell {
+      background: rgba(255, 255, 255, 0.35);
+      border: 1px solid rgba(255, 255, 255, 0.45);
+      box-shadow: 0 20px 60px rgba(15, 23, 42, 0.12);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+    }
+
+    .hero-stat-card {
+      background: rgba(255, 255, 255, 0.65);
+      border: 1px solid rgba(255, 255, 255, 0.6);
+      box-shadow: 0 12px 30px rgba(15, 23, 42, 0.08);
+      backdrop-filter: blur(16px) saturate(160%);
+      -webkit-backdrop-filter: blur(16px) saturate(160%);
+    }
+
+    .hero-primary-cta {
+      box-shadow: 0 12px 30px rgba(37, 180, 179, 0.25);
+    }
+
+    .hero-secondary-cta {
+      border-color: rgba(255, 255, 255, 0.7);
+      box-shadow: 0 18px 40px -24px rgba(1, 42, 74, 0.4);
+    }
 
   /* Premium Button Styles */
   .btn-premium-green {

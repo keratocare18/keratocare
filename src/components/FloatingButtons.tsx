@@ -11,7 +11,7 @@ const FloatingButtons = () => {
   }, []);
 
   return (
-    <div className="fixed right-2 bottom-24 z-30 flex flex-col gap-2.5 sm:right-5 sm:bottom-8 md:right-6 md:bottom-8 mb-[env(safe-area-inset-bottom)]">
+    <div className="kc-floating-buttons fixed right-2 bottom-24 z-30 flex flex-col gap-2.5 sm:right-5 sm:bottom-8 md:right-6 md:bottom-8 mb-[env(safe-area-inset-bottom)]">
       <div
         className={`group flex items-center justify-end gap-2 transition-all duration-500 ${
           visible ? "translate-x-0 opacity-100" : "translate-x-20 opacity-0"

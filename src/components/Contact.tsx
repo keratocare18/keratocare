@@ -203,7 +203,7 @@ ${contactData.message}`;
 
               <Card className="group relative glass-card rounded-2xl p-5 cursor-pointer hover:-translate-y-1 transition-all duration-300 hover:shadow-teal-200/60 hover:shadow-xl border-l-4 border-l-teal-400">
                 <a
-                  href="https://maps.google.com/?q=Pune,Maharashtra"
+                  href="https://www.google.com/maps/place/SHOP+NO-:+137,+KeratoCare,+Mahalaxmi+metro+square,+Jogeshwari+Ln,+Budhwar+Peth,+Pune,+Maharashtra+411002/data=!4m2!3m1!1s0x3bc2c18329ae19c5:0xf86f2c26e2bbfd4!18m1!1e1?utm_source=mstt_1&entry=gps&coh=192189&g_ep=CAESBzI2LjIxLjEYACDXggMqiwEsOTQyNjc3MjcsOTQyOTIxOTUsOTQyOTk1MzIsMTAwNzk2NDk4LDEwMDc5Nzc2MSwxMDA3OTY1MzUsOTQyODA1NzYsOTQyMDczOTQsOTQyMDc1MDYi"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="flex items-start gap-4"
@@ -213,10 +213,10 @@ ${contactData.message}`;
                   </div>
                   <div className="flex-1">
                     <h3 className="font-bold text-lg mb-1">Clinic Location</h3>
-                    <p className="text-foreground mb-1">Premium Vision Care Clinic</p>
-                    <p className="text-muted-foreground mb-2">Pune, Maharashtra</p>
+                    <p className="text-foreground mb-1">KeratoCare</p>
+                    <p className="text-muted-foreground mb-2">SHOP NO-: 137, Mahalaxmi metro square, Jogeshwari Ln, Budhwar Peth, Pune, Maharashtra 411002</p>
                     <p className="text-sm text-muted-foreground">
-                      Mon-Sat, 10:00 AM - 7:00 PM | Sun: By Appointment
+                      Mon-Sun, 10:00 AM - 7:00 PM | By Appointment
                     </p>
                   </div>
                 </a>
@@ -231,14 +231,14 @@ ${contactData.message}`;
                 </div>
                 <div className="h-64 w-full">
                   <iframe
-                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d242117.78285788757!2d73.72262025!3d18.52460675!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3bc2bf2e67461101%3A0x828d43bf9d9ee343!2sPune%2C%20Maharashtra!5e0!3m2!1sen!2sin!4v1699385760000!5m2!1sen!2sin"
+                    src="https://www.google.com/maps?q=SHOP%20NO-%3A%20137%2C%20KeratoCare%2C%20Mahalaxmi%20metro%20square%2C%20Jogeshwari%20Ln%2C%20Budhwar%20Peth%2C%20Pune%2C%20Maharashtra%20411002&output=embed"
                     width="100%"
                     height="100%"
                     style={{ border: 0 }}
                     allowFullScreen
                     loading="lazy"
                     referrerPolicy="no-referrer-when-downgrade"
-                    title="KeratoCare Consulting Location - Pune, Maharashtra"
+                    title="KeratoCare Clinic Location - Budhwar Peth, Pune, Maharashtra"
                   />
                 </div>
               </Card>

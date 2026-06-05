@@ -856,6 +856,59 @@ The contact section also includes:
 - a dead `handleExportAll` helper is defined but never used
 - the UI references HIPAA/privacy consent, but there is no backend or compliance workflow enforcing healthcare-grade data handling
 
+### Patient reviews API
+
+The Patient Success Stories section now reads through the existing `/api/reviews` proxy, which forwards to the same Google Apps Script deployment used by the site. The deployment should expose a `doGet` handler that understands `action=reviews` and returns JSON rows from the `Reviews` sheet.
+
+### Reviews sheet structure
+
+Create a new tab named `Reviews` in the same spreadsheet that already stores contact submissions. Use this header row:
+
+`Name | City | Age | Review | BeforeCondition | AfterResult | LensType | Rating | Active`
+
+```javascript
+function doGet(e) {
+   const action = String(e && e.parameter && e.parameter.action ? e.parameter.action : "");
+
+   if (action !== "reviews" && action !== "getReviews") {
+      return ContentService.createTextOutput(JSON.stringify({
+         error: "Unsupported action"
+      })).setMimeType(ContentService.MimeType.JSON);
+   }
+
+   const sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName("Reviews");
+   if (!sheet) {
+      return ContentService.createTextOutput(JSON.stringify([])).setMimeType(ContentService.MimeType.JSON);
+   }
+
+   const rows = sheet.getDataRange().getValues();
+   const headers = rows.shift() || [];
+   const headerIndex = headers.reduce((acc, header, index) => {
+      acc[String(header).trim()] = index;
+      return acc;
+   }, {});
+
+   const reviews = rows
+      .map((row) => ({
+         name: String(row[headerIndex.Name] || "").trim(),
+         city: String(row[headerIndex.City] || "").trim(),
+         age: String(row[headerIndex.Age] || "").trim(),
+         review: String(row[headerIndex.Review] || "").trim(),
+         beforeCondition: String(row[headerIndex.BeforeCondition] || "").trim(),
+         afterResult: String(row[headerIndex.AfterResult] || "").trim(),
+         lensType: String(row[headerIndex.LensType] || "").trim(),
+         rating: String(row[headerIndex.Rating] || "").trim(),
+         active: String(row[headerIndex.Active] || "").trim(),
+      }))
+      .filter((review) => review.active.toUpperCase() === "TRUE")
+      .slice(0, 6);
+
+   return ContentService
+      .createTextOutput(JSON.stringify(reviews))
+      .setMimeType(ContentService.MimeType.JSON);
+}
+```
+
 ### Source references
 
 - `src/components/Contact.tsx`
@@ -1285,8 +1338,14 @@ The admin panel reads from localStorage and computes:
 ```text
 kerato_care9/
 ├── public/
-│   ├── favicon.ico
-│   ├── favicon.svg
+│   ├── favicon_io/
+│   │   ├── android-chrome-192x192.png
+│   │   ├── android-chrome-512x512.png
+│   │   ├── apple-touch-icon.png
+│   │   ├── favicon-16x16.png
+│   │   ├── favicon-32x32.png
+│   │   ├── favicon.ico
+│   │   └── site.webmanifest
 │   ├── hero-video.mp4
 │   ├── logo.svg
 │   └── robots.txt

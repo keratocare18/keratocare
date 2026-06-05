@@ -1,12 +1,12 @@
-import { useEffect, useState, type TransitionEvent } from "react";
+import { useState } from "react";
 import { AlertCircle, Eye, Lightbulb, type LucideIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
-import glareReductionAfter from "@/assets/treatments/glare-reduction-after.jpg";
-import glareReductionBefore from "@/assets/treatments/glare-reduction-before.jpg";
-import lightSensitivityAfter from "@/assets/treatments/light-sensitivity-after.jpg";
-import lightSensitivityBefore from "@/assets/treatments/light-sensitivity-before.jpg";
-import visionClarityAfter from "@/assets/treatments/vision-clarity-after.jpg";
-import visionClarityBefore from "@/assets/treatments/vision-clarity-before.jpg";
+import blurryVisionAfter from "@/assets/treatments/blurry-vision/after.jpg";
+import blurryVisionBefore from "@/assets/treatments/blurry-vision/before.jpg";
+import lightSensitivityAfter from "@/assets/treatments/light-sensitivity/after.jpg";
+import lightSensitivityBefore from "@/assets/treatments/light-sensitivity/before.jpg";
+import nightGlareAfter from "@/assets/treatments/night-glare/after.jpg";
+import nightGlareBefore from "@/assets/treatments/night-glare/before.jpg";
 
 const comparisonStates = ["before", "after"] as const;
 type ComparisonState = (typeof comparisonStates)[number];
@@ -23,9 +23,6 @@ type TreatmentImage = {
   alt: string;
   label: string;
   summary: string;
-  width: number;
-  height: number;
-  imageClassName?: string;
 };
 
 type TreatmentOption = {
@@ -42,20 +39,16 @@ const treatmentData = {
     description: "Keratoconus blurs and distorts everything. After treatment, patients describe it like someone cleaned the lens of life",
     images: {
       before: {
-        src: visionClarityBefore,
+        src: blurryVisionBefore,
         alt: "Blurred eye chart simulating vision clarity before keratoconus treatment",
         label: "Before Treatment - Blurred Vision",
         summary: "This is how a keratoconus patient reads an eye chart. Familiar?",
-        width: 1056,
-        height: 1489,
       },
       after: {
-        src: visionClarityAfter,
+        src: blurryVisionAfter,
         alt: "Clear eye chart showing improved vision clarity after keratoconus treatment",
         label: "After Treatment - Improved Clarity",
         summary: "After treatment: sharper focus supports more confident reading and daily sight.",
-        width: 736,
-        height: 1039,
       },
     },
   },
@@ -65,20 +58,16 @@ const treatmentData = {
     description: "Night driving becomes a nightmare with keratoconus — every light explodes into a starburst. After treatment, patients can drive confidently again.",
     images: {
       before: {
-        src: glareReductionBefore,
+        src: nightGlareBefore,
         alt: "Night street scene with excessive glare before treatment",
         label: "Before Treatment - Excessive Glare",
         summary: "Night driving with keratoconus. Our patients call this their biggest fear.",
-        width: 1600,
-        height: 1200,
       },
       after: {
-        src: glareReductionAfter,
+        src: nightGlareAfter,
         alt: "Night street scene with reduced glare after treatment",
         label: "After Treatment - Reduced Glare",
         summary: "After treatment: light flare is calmer, making edges and contrast easier to read.",
-        width: 1600,
-        height: 1200,
       },
     },
   },
@@ -92,18 +81,12 @@ const treatmentData = {
         alt: "Over-bright city scene simulating strong light sensitivity before treatment",
         label: "Before Treatment - Severe Sensitivity",
         summary: "Even indoor light felt unbearable. Sound familiar? You're not alone.",
-        width: 1254,
-        height: 1254,
-        imageClassName: "object-cover scale-[1.12] sm:scale-[1.16]",
       },
       after: {
         src: lightSensitivityAfter,
         alt: "Balanced city scene showing improved light comfort after treatment",
         label: "After Treatment - Improved Comfort",
         summary: "After treatment: brightness feels more controlled, with better comfort in daily environments.",
-        width: 736,
-        height: 736,
-        imageClassName: "object-cover scale-[1.12] sm:scale-[1.16]",
       },
     },
   },
@@ -129,80 +112,7 @@ const VisionSlider = () => {
   const [selectedState, setSelectedState] = useState<ComparisonState>("before");
   const activeTreatment = treatmentData[selectedTreatmentKey];
   const targetImage = activeTreatment.images[selectedState];
-  const [displayedImage, setDisplayedImage] =
-    useState<TreatmentImage>(targetImage);
-  const [incomingImage, setIncomingImage] = useState<TreatmentImage | null>(
-    null,
-  );
-  const [isIncomingVisible, setIsIncomingVisible] = useState(false);
-
-  useEffect(() => {
-    treatmentOrder.forEach((key) => {
-      comparisonStates.forEach((stateKey) => {
-        const image = new window.Image();
-        image.src = treatmentData[key].images[stateKey].src;
-      });
-    });
-  }, []);
-
-  useEffect(() => {
-    if (displayedImage.src === targetImage.src) {
-      return;
-    }
-
-    setIncomingImage(null);
-    setIsIncomingVisible(false);
-
-    let cancelled = false;
-    let frameId = 0;
-    const preloadedImage = new window.Image();
-
-    // PERF: Preloading the next slide before swapping avoids decode jank when
-    // users switch images, and rAF starts the transition on a paint boundary.
-    const beginTransition = () => {
-      if (cancelled) {
-        return;
-      }
-
-      setIncomingImage(targetImage);
-      setIsIncomingVisible(false);
-
-      frameId = window.requestAnimationFrame(() => {
-        setIsIncomingVisible(true);
-      });
-    };
-
-    preloadedImage.onload = beginTransition;
-    preloadedImage.onerror = beginTransition;
-    preloadedImage.src = targetImage.src;
-
-    if (preloadedImage.complete) {
-      preloadedImage.onload = null;
-      preloadedImage.onerror = null;
-      beginTransition();
-    }
-
-    return () => {
-      cancelled = true;
-      preloadedImage.onload = null;
-      preloadedImage.onerror = null;
-      if (frameId) {
-        window.cancelAnimationFrame(frameId);
-      }
-    };
-  }, [displayedImage.src, targetImage]);
-
-  const handleIncomingTransitionEnd = (event: TransitionEvent<HTMLImageElement>) => {
-    if (event.propertyName !== "opacity" || !incomingImage || !isIncomingVisible) {
-      return;
-    }
-
-    // PERF: Transitionend removes the fixed settle timeout so image swaps stay
-    // synchronized with the compositor instead of assuming a timer duration.
-    setDisplayedImage(incomingImage);
-    setIncomingImage(null);
-    setIsIncomingVisible(false);
-  };
+  const isBlurryVision = selectedTreatmentKey === "visionClarity";
 
   return (
     <section className="reveal py-20 bg-background">
@@ -278,46 +188,26 @@ const VisionSlider = () => {
               </div>
             </div>
 
-            <div className="mx-auto w-full max-w-sm flex flex-col items-center gap-4">
-              <div className="relative w-full overflow-hidden rounded-2xl border border-border/50 bg-slate-50 shadow-lg aspect-[5/4] sm:aspect-[4/3]">
-                <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(79,172,254,0.08),transparent_55%)]" />
-                <div className="relative h-full w-full overflow-hidden">
-                  <img
-                    src={displayedImage.src}
-                    alt={displayedImage.alt}
-                    width={displayedImage.width}
-                    height={displayedImage.height}
-                    className={cn(
-                      "h-full w-full transform-gpu transition-transform duration-500 ease-out will-change-transform",
-                      displayedImage.imageClassName ?? "object-contain",
-                      incomingImage ? "scale-[1.01]" : "scale-100",
-                    )}
-                    draggable={false}
-                    decoding="async"
-                    loading="lazy"
-                  />
-                  {incomingImage ? (
-                    <img
-                      src={incomingImage.src}
-                      alt=""
-                      aria-hidden="true"
-                      width={incomingImage.width}
-                      height={incomingImage.height}
-                      className={cn(
-                        "absolute inset-0 h-full w-full transform-gpu transition-[transform,opacity] duration-500 ease-out will-change-[transform,opacity]",
-                        incomingImage.imageClassName ?? "object-contain",
-                        isIncomingVisible
-                          ? "scale-100 opacity-100"
-                          : "scale-[1.015] opacity-0",
-                      )}
-                      draggable={false}
-                      decoding="async"
-                      loading="lazy"
-                      onTransitionEnd={handleIncomingTransitionEnd}
-                    />
-                  ) : null}
-                </div>
+            <div className="mx-auto w-full flex flex-col items-center gap-4">
+              <div
+  className={cn(
+    "w-full overflow-hidden rounded-2xl border border-border/50 bg-slate-50 shadow-lg",
+    isBlurryVision ? "max-w-xs" : "max-w-xl"
+  )}
+>
 
+
+
+
+                <img
+                  key={`${selectedTreatmentKey}-${selectedState}`}
+                  src={targetImage.src}
+                  alt={targetImage.alt}
+                  className="w-full h-auto block rounded-xl"
+                  draggable={false}
+                  decoding="async"
+                  loading="lazy"
+                />
               </div>
 
               <p className="text-sm text-center text-slate-600 italic">

@@ -154,24 +154,26 @@ const Header = () => {
           >
             <div className="mt-3 rounded-3xl border border-white/40 bg-white/90 px-4 py-4 backdrop-blur-xl">
               <nav className="flex flex-col gap-2">
-                {navItems.map((item) => {
-                  const isActive = activeSection === item.id;
+                {navItems
+                  .filter((item) => item.id !== "assessment")
+                  .map((item) => {
+                    const isActive = activeSection === item.id;
 
-                  return (
-                    <button
-                      key={item.id}
-                      type="button"
-                      onClick={() => scrollToSection(item.id)}
-                      className={`rounded-2xl px-4 py-3 text-left text-sm font-medium transition-all duration-200 ${
-                        isActive
-                          ? "bg-blue-50 text-blue-600"
-                          : "text-slate-700 hover:bg-sky-50 hover:text-[#173B8D]"
-                      }`}
-                    >
-                      {item.label}
-                    </button>
-                  );
-                })}
+                    return (
+                      <button
+                        key={item.id}
+                        type="button"
+                        onClick={() => scrollToSection(item.id)}
+                        className={`rounded-2xl px-4 py-3 text-left text-sm font-medium transition-all duration-200 ${
+                          isActive
+                            ? "bg-blue-50 text-blue-600"
+                            : "text-slate-700 hover:bg-sky-50 hover:text-[#173B8D]"
+                        }`}
+                      >
+                        {item.label}
+                      </button>
+                    );
+                  })}
 
                 <div className="mt-3 grid gap-3 sm:grid-cols-2">
                   <a

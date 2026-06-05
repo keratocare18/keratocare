@@ -1,6 +1,10 @@
 {
   "rewrites": [
     {
+      "source": "/api/reviews",
+      "destination": "https://script.google.com/macros/s/AKfycbxL2QuoA6l0XhCoiVLK4OuXm8Ie2gk3pweJ8CSp-SeogwkjUimBRivxLnlL8ZHODvo/exec"
+    },
+    {
       "source": "/(.*)",
       "destination": "/index.html"
     }
