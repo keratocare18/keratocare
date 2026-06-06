@@ -104,7 +104,7 @@ const Index = () => {
       root.querySelectorAll(".reveal").forEach(observeRevealElement);
     };
 
-    // PERF: Lazy-loaded sections mount after the first paint, so a one-time
+    // React.lazy sections can still resolve after the first paint, so a one-time
     // query can miss their reveal nodes and leave them hidden at opacity 0.
     // MutationObserver lets the reveal system observe newly inserted sections.
     observeRevealTree(document);
@@ -147,29 +147,24 @@ const Index = () => {
         <LazySection
           component={VisionSlider}
           className="reveal reveal-delay-1"
-          placeholderHeight={760}
         />
         <LazySection
           component={Services}
           className="reveal"
-          placeholderHeight={980}
         />
         {/* Assessment section removed per request */}
         <LazySection
           component={About}
           className="reveal reveal-delay-1"
-          placeholderHeight={1050}
         />
         <LazySection
           component={Contact}
           className="reveal"
-          placeholderHeight={1180}
         />
       </main>
       <LazySection
         component={Footer}
         className="reveal reveal-delay-1"
-        placeholderHeight={860}
       />
       <MobileNav />
       <FloatingButtons />

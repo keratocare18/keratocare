@@ -57,7 +57,7 @@ const Hero = () => {
         style={{ animationDelay: "4s", opacity: 0.18, filter: "blur(90px)" }}
       />
 
-      <div className="container relative z-10 flex min-h-[calc(90svh-var(--kc-hero-offset))] items-center px-4 py-1 sm:py-2 md:py-2 lg:py-3">
+      <div className="hero-content-wrap container relative z-10 flex min-h-[calc(90svh-var(--kc-hero-offset))] items-center px-4 py-1 sm:py-2 md:py-2 lg:py-3">
         <div className="grid w-full items-center gap-5 lg:grid-cols-[minmax(0,1.02fr)_minmax(0,0.98fr)] lg:gap-6 xl:gap-8">
           <div className="order-1 mx-auto max-w-2xl text-center lg:mx-0 lg:max-w-[44rem] lg:text-left xl:max-w-[48rem]">
             <div className="space-y-3 sm:space-y-4 lg:space-y-4">

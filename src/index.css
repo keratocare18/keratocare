@@ -466,6 +466,28 @@ body { min-height: 100svh; }
 
 
 /* Mobile-only layout tweaks (do not affect desktop/laptop) */
+.hero-content-wrap {
+  padding-top: 2rem;
+}
+
+@media (min-width: 476px) {
+  .hero-content-wrap {
+    padding-top: 2.5rem;
+  }
+}
+
+@media (min-width: 768px) {
+  .hero-content-wrap {
+    padding-top: 3rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .hero-content-wrap {
+    padding-top: 0;
+  }
+}
+
 @media (max-width: 430px) {
   /* Reduce hero section vertical footprint on small viewports */
   .hero-section {
