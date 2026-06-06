@@ -688,8 +688,31 @@ body { min-height: 100svh; }
     }
 
     .hero-secondary-cta {
-      border-color: rgba(255, 255, 255, 0.7);
-      box-shadow: 0 18px 40px -24px rgba(1, 42, 74, 0.4);
+      color: #0B3D91;
+      background: rgba(255, 255, 255, 0.75);
+      border-color: #4FACFE;
+      box-shadow:
+        0 18px 40px -24px rgba(11, 61, 145, 0.18),
+        0 10px 24px -20px rgba(79, 172, 254, 0.3);
+      transition:
+        background-color 0.25s ease,
+        border-color 0.25s ease,
+        box-shadow 0.25s ease,
+        color 0.25s ease,
+        transform 0.25s ease;
+    }
+
+    .hero-secondary-cta:hover {
+      color: #0B3D91;
+      background: rgba(255, 255, 255, 0.92);
+      border-color: #2563EB;
+      box-shadow:
+        0 20px 42px -24px rgba(37, 99, 235, 0.24),
+        0 0 0 1px rgba(79, 172, 254, 0.2);
+    }
+
+    .hero-secondary-cta svg {
+      color: currentColor;
     }
 
   /* Premium Button Styles */

@@ -156,7 +156,7 @@ const Hero = () => {
                 <Button
                   asChild
                   variant="ghost"
-                  className="hero-secondary-cta h-auto w-full rounded-full border-2 border-white/70 px-6 py-3.5 text-[15px] font-semibold text-white shadow-[0_18px_40px_-24px_rgba(1,42,74,0.45)] backdrop-blur-sm transition-all duration-200 hover:-translate-y-0.5 hover:bg-white/20 sm:w-auto sm:px-7"
+                  className="hero-secondary-cta h-auto w-full rounded-full border-2 px-6 py-3.5 text-[15px] font-semibold backdrop-blur-sm transition-all duration-200 hover:-translate-y-0.5 sm:w-auto sm:px-7"
                 >
                   <a href="tel:+918432861131">
                     <Phone className="w-4 h-4 animate-pulse" />
