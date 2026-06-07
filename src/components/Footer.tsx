@@ -153,7 +153,7 @@ const Footer = () => {
   return (
     <footer
       aria-label="Site Footer"
-      className="relative overflow-hidden bg-[linear-gradient(180deg,#f7fbff_0%,#edf9ff_42%,#e8fdff_100%)] pb-32 pt-24 text-slate-800 md:pb-16"
+      className="relative overflow-hidden bg-[linear-gradient(180deg,#ffffff_0%,#ffffff_50%,#edf9ff_75%,#e8fdff_100%)] pb-32 pt-24 text-slate-800 md:pb-16"
     >
       <div
         aria-hidden="true"
