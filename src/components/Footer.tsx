@@ -11,27 +11,27 @@ import { openAssessmentBooking } from "@/lib/whatsapp";
 
 const serviceLinks = [
   {
-    href: "#keratoconus-treatment",
+    href: "/#keratoconus-treatment",
     label: "Keratoconus Treatment",
     title: "Explore keratoconus treatment at KeratoCare",
   },
   {
-    href: "#corneal-mapping",
+    href: "/corneal-mapping",
     label: "Corneal Mapping",
     title: "Learn about corneal mapping in Pune",
   },
   {
-    href: "#glare-reduction",
+    href: "/glare-reduction",
     label: "Glare Reduction",
     title: "See glare reduction eye care solutions",
   },
   {
-    href: "#scleral-lenses",
+    href: "/scleral-lenses",
     label: "Scleral Lenses",
     title: "Discover scleral lenses for keratoconus",
   },
   {
-    href: "#contact-lenses",
+    href: "/specialty-contact-lenses",
     label: "Specialty Contact Lenses",
     title: "Discover specialty contact lenses for corneal care",
   },
@@ -39,22 +39,22 @@ const serviceLinks = [
 
 const whyLinks = [
   {
-    href: "#about",
+    href: "/#about",
     label: "Best Eye Clinic in Pune",
     title: "Learn why KeratoCare is a leading eye clinic in Pune",
   },
   {
-    href: "#specialists",
+    href: "/#specialists",
     label: "Keratoconus Specialists",
     title: "Meet KeratoCare keratoconus specialists",
   },
   {
-    href: "#testimonials",
+    href: "/#testimonials",
     label: "Patient Success Stories",
     title: "Read KeratoCare patient success stories",
   },
   {
-    href: "#services",
+    href: "/#services",
     label: "Advanced Corneal Care",
     title: "Explore advanced corneal care services",
   },
@@ -92,7 +92,7 @@ const resourceLinks = [
     title: "View KeratoCare contact and complaints information",
   },
   {
-    href: "#contact",
+    href: "/#contact",
     label: "Contact Us",
     title: "Contact KeratoCare in Pune",
   },

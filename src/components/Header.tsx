@@ -2,11 +2,11 @@ import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Menu, Phone, X } from "lucide-react";
 import { openWhatsAppWithMessage } from "@/lib/whatsapp";
+import { useNavigate, useLocation } from "react-router-dom";
 
 const navItems = [
   { id: "hero", label: "Home" },
   { id: "services", label: "Services" },
-  { id: "assessment", label: "Assessment" },
   { id: "about", label: "About" },
   { id: "contact", label: "Contact" },
 ];
@@ -31,6 +31,9 @@ const Header = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [activeSection, setActiveSection] = useState("hero");
+
+  const navigate = useNavigate();
+  const location = useLocation();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -69,7 +72,22 @@ const Header = () => {
 
     sections.forEach((section) => observer.observe(section));
     return () => observer.disconnect();
-  }, []);
+  }, [location.pathname]); // Re-run observer when route path changes to bind/unbind elements
+
+  // Auto-scroll when landing on homepage with a hash
+  useEffect(() => {
+    if (location.pathname === "/" && location.hash) {
+      const id = location.hash.replace("#", "");
+      const element = document.getElementById(id);
+      if (element) {
+        setActiveSection(id);
+        const timer = setTimeout(() => {
+          element.scrollIntoView({ behavior: "smooth" });
+        }, 150);
+        return () => clearTimeout(timer);
+      }
+    }
+  }, [location.pathname, location.hash]);
 
   const scrollToSection = (id: string) => {
     const element = document.getElementById(id);
@@ -77,6 +95,15 @@ const Header = () => {
       setActiveSection(id);
       element.scrollIntoView({ behavior: "smooth" });
       setIsOpen(false);
+    }
+  };
+
+  const handleNav = (id: string) => {
+    setIsOpen(false);
+    if (location.pathname === "/") {
+      scrollToSection(id);
+    } else {
+      navigate(`/#${id}`);
     }
   };
 
@@ -91,7 +118,7 @@ const Header = () => {
           <div className="flex min-h-[74px] items-center justify-between gap-3 lg:min-h-[84px] lg:gap-5">
             <button
               type="button"
-              onClick={() => scrollToSection("hero")}
+              onClick={() => handleNav("hero")}
               className="flex shrink-0 items-center self-center rounded-2xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-200/90 focus-visible:ring-offset-0"
               aria-label="Go to KeratoCare homepage section"
             >
@@ -107,7 +134,7 @@ const Header = () => {
                     <div key={item.id} className="group relative">
                       <button
                         type="button"
-                        onClick={() => scrollToSection(item.id)}
+                        onClick={() => handleNav(item.id)}
                         className={`relative py-2 text-sm ${
                           isActive
                             ? "font-semibold text-blue-600"
@@ -154,26 +181,24 @@ const Header = () => {
           >
             <div className="mt-3 rounded-3xl border border-white/40 bg-white/90 px-4 py-4 backdrop-blur-xl">
               <nav className="flex flex-col gap-2">
-                {navItems
-                  .filter((item) => item.id !== "assessment")
-                  .map((item) => {
-                    const isActive = activeSection === item.id;
+                {navItems.map((item) => {
+                  const isActive = activeSection === item.id;
 
-                    return (
-                      <button
-                        key={item.id}
-                        type="button"
-                        onClick={() => scrollToSection(item.id)}
-                        className={`rounded-2xl px-4 py-3 text-left text-sm font-medium transition-all duration-200 ${
-                          isActive
-                            ? "bg-blue-50 text-blue-600"
-                            : "text-slate-700 hover:bg-sky-50 hover:text-[#173B8D]"
-                        }`}
-                      >
-                        {item.label}
-                      </button>
-                    );
-                  })}
+                  return (
+                    <button
+                      key={item.id}
+                      type="button"
+                      onClick={() => handleNav(item.id)}
+                      className={`rounded-2xl px-4 py-3 text-left text-sm font-medium transition-all duration-200 ${
+                        isActive
+                          ? "bg-blue-50 text-blue-600"
+                          : "text-slate-700 hover:bg-sky-50 hover:text-[#173B8D]"
+                      }`}
+                    >
+                      {item.label}
+                    </button>
+                  );
+                })}
 
                 <div className="mt-3 grid gap-3 sm:grid-cols-2">
                   <a

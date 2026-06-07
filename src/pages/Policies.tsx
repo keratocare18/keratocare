@@ -103,7 +103,7 @@ const Policies = () => {
       <Header />
 
       <div
-        className="relative w-full overflow-hidden bg-gradient-to-r from-[#012A4A] to-[#25B4B3] py-20"
+        className="relative w-full overflow-hidden bg-gradient-to-r from-[#012A4A] to-[#25B4B3] pt-[calc(var(--kc-hero-offset)+4rem)] pb-20"
         style={{
           backgroundImage:
             "radial-gradient(circle, rgba(79,172,254,0.15) 1px, transparent 1px)",
@@ -250,6 +250,41 @@ const Policies = () => {
 
                   <div>
                     <h3 className="mb-2 font-bold text-gray-900">
+                      Analytics & Website Usage Monitoring
+                    </h3>
+                    <p>
+                      KeratoCare uses Microsoft Clarity to better understand how
+                      visitors interact with the website. Microsoft Clarity may
+                      collect information such as:
+                    </p>
+                    <ul className="mt-2 list-inside list-disc space-y-1">
+                      <li>Pages visited</li>
+                      <li>Clicks and taps</li>
+                      <li>Scroll behavior</li>
+                      <li>Device and browser information</li>
+                      <li>General interaction patterns</li>
+                      <li>Anonymous session recordings</li>
+                      <li>Heatmap data</li>
+                    </ul>
+                    <p className="mt-2">
+                      The purpose is website improvement, usability analysis,
+                      performance optimization, and service enhancement. The
+                      clinic does not use this information to identify individual
+                      visitors. No medical records, diagnosis information,
+                      treatment information, or sensitive health information is
+                      intentionally collected through Microsoft Clarity. Data
+                      collected is limited to website interaction and analytics
+                      purposes.
+                    </p>
+                    <p className="mt-2">
+                      By continuing to use this website, users acknowledge that
+                      anonymized website interaction data may be collected for
+                      analytics and service improvement purposes.
+                    </p>
+                  </div>
+
+                  <div>
+                    <h3 className="mb-2 font-bold text-gray-900">
                       Your Rights
                     </h3>
                     <p>
@@ -337,6 +372,19 @@ const Policies = () => {
                       If you are experiencing a sudden change in vision, severe
                       eye pain, or any other ocular emergency, do not rely on
                       this website. Seek immediate emergency medical care.
+                    </p>
+                  </div>
+
+                  <div>
+                    <h3 className="mb-2 font-bold text-gray-900">
+                      Website Analytics Tools
+                    </h3>
+                    <p>
+                      Analytics tools used on the website are intended solely for
+                      website performance monitoring and user experience
+                      improvement. These tools are not used for medical diagnosis,
+                      treatment decisions, clinical evaluation, or collection of
+                      patient medical records.
                     </p>
                   </div>
                 </div>
@@ -432,6 +480,19 @@ const Policies = () => {
 
                   <div>
                     <h3 className="mb-2 font-bold text-gray-900">
+                      Website Analytics
+                    </h3>
+                    <p>
+                      This website uses analytics tools, including Microsoft
+                      Clarity, to understand how visitors interact with website
+                      content and improve overall website performance. Users
+                      acknowledge that anonymous interaction information may be
+                      collected while using the website.
+                    </p>
+                  </div>
+
+                  <div>
+                    <h3 className="mb-2 font-bold text-gray-900">
                       Changes to Terms
                     </h3>
                     <p>
@@ -482,8 +543,11 @@ const Policies = () => {
                         <strong className="text-gray-900">
                           Analytics cookies:
                         </strong>{" "}
-                        We may use anonymized analytics to understand how
-                        visitors interact with our website and improve content
+                        The website may use analytics technologies including
+                        Microsoft Clarity to understand visitor behavior, improve
+                        user experience, identify usability issues, and optimize
+                        website performance. These tools may use cookies or similar
+                        technologies to function properly.
                       </li>
                       <li>
                         <strong className="text-gray-900">

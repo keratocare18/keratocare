@@ -1,12 +1,16 @@
 import { memo, useEffect, useState } from "react";
 import { Calendar, ClipboardCheck, Home, Info, Mail } from "lucide-react";
 import { openAssessmentBooking } from "@/lib/whatsapp";
+import { useNavigate, useLocation } from "react-router-dom";
 
-const observableSections = ["hero", "services", "assessment", "about", "contact"] as const;
+const observableSections = ["hero", "services", "about", "contact"] as const;
 
 const MobileNav = memo(() => {
   const [visible, setVisible] = useState(true);
   const [activeSection, setActiveSection] = useState("hero");
+
+  const navigate = useNavigate();
+  const location = useLocation();
 
   useEffect(() => {
     let lastScrollY = window.scrollY;
@@ -63,8 +67,7 @@ const MobileNav = memo(() => {
           return;
         }
 
-        const mappedSection = nextSection === "services" ? "assessment" : nextSection;
-        setActiveSection((previous) => (previous === mappedSection ? previous : mappedSection));
+        setActiveSection((previous) => (previous === nextSection ? previous : nextSection));
       },
       {
         threshold: [0.18, 0.36, 0.55, 0.72],
@@ -74,10 +77,14 @@ const MobileNav = memo(() => {
 
     sections.forEach((section) => observer.observe(section));
     return () => observer.disconnect();
-  }, []);
+  }, [location.pathname]);
 
-  const scrollToSection = (id: string) => {
-    document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
+  const handleNav = (id: string) => {
+    if (location.pathname === "/") {
+      document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
+    } else {
+      navigate(`/#${id}`);
+    }
   };
 
   const itemClass = (id: string) =>
@@ -98,7 +105,7 @@ const MobileNav = memo(() => {
       <div className="grid h-16 grid-cols-5 gap-1 px-2 py-2">
         <button
           type="button"
-          onClick={() => scrollToSection("hero")}
+          onClick={() => handleNav("hero")}
           aria-label="Go to Home"
           className={itemClass("hero")}
         >
@@ -108,7 +115,7 @@ const MobileNav = memo(() => {
 
         <button
           type="button"
-          onClick={() => scrollToSection("about")}
+          onClick={() => handleNav("about")}
           aria-label="Go to About"
           className={itemClass("about")}
         >
@@ -116,10 +123,9 @@ const MobileNav = memo(() => {
           <span>About</span>
         </button>
 
-        {/* Mobile: assessment section removed from page; point this item to Services instead to avoid broken links */}
         <button
           type="button"
-          onClick={() => scrollToSection("services")}
+          onClick={() => handleNav("services")}
           aria-label="Go to Services"
           className={itemClass("services")}
         >
@@ -129,7 +135,7 @@ const MobileNav = memo(() => {
 
         <button
           type="button"
-          onClick={() => scrollToSection("contact")}
+          onClick={() => handleNav("contact")}
           aria-label="Go to Contact"
           className={itemClass("contact")}
         >
